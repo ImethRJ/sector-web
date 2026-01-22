@@ -6,7 +6,13 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 mb-16">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <img src={sectorLogo} alt="Logo" className="w-full h-full object-contain" />
+                            <div className="w-12 h-12 flex-shrink-0">
+                                <img
+                                    src={sectorLogo}
+                                    alt="Logo"
+                                    className="w-full h-full object-contain rounded-lg"
+                                />
+                            </div>
                             <h2 className="text-white font-black text-2xl tracking-tighter uppercase">Sector</h2>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
@@ -35,7 +41,7 @@ const Footer = () => {
                     © 2026 Sector Education. All rights reserved.
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 };
 
