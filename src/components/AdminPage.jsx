@@ -188,10 +188,16 @@ const ImageUploadGroup = ({ value, onChange, inputClass }) => {
 // --- FORM COMPONENTS ---
 
 const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState(editingItem || { name: '', subject: '', image: '' });
+    const [form, setForm] = useState({ name: '', subject: '', image: '' });
 
-    // Update form if editingItem changes
-    useState(() => { if (editingItem) setForm(editingItem) }, [editingItem]);
+    // CORRECT: Use useEffect to update form when editingItem changes
+    useEffect(() => {
+        if (editingItem) {
+            setForm(editingItem);
+        } else {
+            setForm({ name: '', subject: '', image: '' });
+        }
+    }, [editingItem]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
