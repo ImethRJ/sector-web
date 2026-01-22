@@ -52,12 +52,6 @@ const AllTutors = () => {
                             <h3 className="text-xl font-bold text-[#1a237e] mb-1">{tutor.name}</h3>
                             <p className="text-blue-600 font-semibold text-sm uppercase">{tutor.subject}</p>
 
-                            {/* Optional: Show a "Featured" badge if they are featured */}
-                            {tutor.isFeatured && (
-                                <span className="mt-2 inline-block bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-1 rounded-full uppercase">
-                                    Featured
-                                </span>
-                            )}
                         </div>
                     ))}
                 </div>
