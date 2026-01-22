@@ -28,7 +28,7 @@ function App() {
       <Route path="/" element={<LandingPage />} />
 
       {/* If URL matches your secret key, show ONLY the Admin Panel */}
-      <Route path="/ada" element={<AdminPage />} />
+      <Route path="/sector19365" element={<AdminPage />} />
     </Routes>
   )
 }
