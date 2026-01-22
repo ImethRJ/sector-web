@@ -1,6 +1,99 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
+
+// --- FORM COMPONENTS (Moved outside to prevent re-mounting issues) ---
+
+const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
+    const [form, setForm] = useState({ name: '', subject: '', image: '' });
+
+    useEffect(() => {
+        if (editingItem) setForm(editingItem);
+        else setForm({ name: '', subject: '', image: '' });
+    }, [editingItem]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(form);
+        setForm({ name: '', subject: '', image: '' });
+        setEditingItem(null);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input placeholder="Full Name" className={inputClass} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
+            <input placeholder="Subject Expertise" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
+            <ImageUploadGroup value={form.image} onChange={(val) => setForm({ ...form, image: val })} inputClass={inputClass} />
+            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
+                {editingItem ? 'Update Details' : 'Register Tutor'}
+            </button>
+            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
+        </form>
+    );
+};
+
+const NoticeForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
+    const [form, setForm] = useState({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
+
+    useEffect(() => {
+        if (editingItem) setForm(editingItem);
+        else setForm({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
+    }, [editingItem]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(form);
+        setForm({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
+        setEditingItem(null);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input placeholder="Notice Title" className={inputClass} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
+            <textarea placeholder="Content" className={`${inputClass} h-32`} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} required />
+            <input type="date" className={inputClass} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
+                {editingItem ? 'Update Notice' : 'Post Notice'}
+            </button>
+            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
+        </form>
+    );
+};
+
+const TimetableForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
+    const [form, setForm] = useState({ subject: '', day: 'Monday', startTime: '', endTime: '' });
+
+    useEffect(() => {
+        if (editingItem) setForm(editingItem);
+        else setForm({ subject: '', day: 'Monday', startTime: '', endTime: '' });
+    }, [editingItem]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(form);
+        setForm({ subject: '', day: 'Monday', startTime: '', endTime: '' });
+        setEditingItem(null);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input placeholder="Subject" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
+            <select className={inputClass} value={form.day} onChange={e => setForm({ ...form, day: e.target.value })}>
+                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <div className="grid grid-cols-2 gap-2">
+                <input type="time" className={inputClass} value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} required />
+                <input type="time" className={inputClass} value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} required />
+            </div>
+            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
+                {editingItem ? 'Update Schedule' : 'Add to Timetable'}
+            </button>
+            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
+        </form>
+    );
+};
+
+// --- MAIN ADMIN PAGE ---
 
 const AdminPage = () => {
     const {
@@ -45,7 +138,7 @@ const AdminPage = () => {
                     ))}
                 </nav>
 
-                <main className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <main>
                     {/* --- TEACHERS SECTION --- */}
                     {activeTab === 'teachers' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -177,96 +270,11 @@ const ImageUploadGroup = ({ value, onChange, inputClass }) => {
                 <button type="button" onClick={() => setUseUrl(false)} className={`text-xs font-bold uppercase ${!useUrl ? 'text-indigo-600' : 'text-slate-400'}`}>Upload</button>
             </div>
             {useUrl ? (
-                <input placeholder="Image URL" className={inputClass} value={value} onChange={e => onChange(e.target.value)} />
+                <input placeholder="Image URL" className={inputClass} value={value || ''} onChange={e => onChange(e.target.value)} />
             ) : (
                 <input type="file" accept="image/*" className={inputClass} onChange={handleFileChange} />
             )}
         </div>
-    );
-};
-
-// --- FORM COMPONENTS ---
-
-const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState({ name: '', subject: '', image: '' });
-
-    // CORRECT: Use useEffect to update form when editingItem changes
-    useEffect(() => {
-        if (editingItem) {
-            setForm(editingItem);
-        } else {
-            setForm({ name: '', subject: '', image: '' });
-        }
-    }, [editingItem]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(form);
-        setForm({ name: '', subject: '', image: '' });
-        setEditingItem(null);
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <input placeholder="Full Name" className={inputClass} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
-            <input placeholder="Subject Expertise" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
-            <ImageUploadGroup value={form.image} onChange={(val) => setForm({ ...form, image: val })} inputClass={inputClass} />
-            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
-                {editingItem ? 'Update Details' : 'Register Tutor'}
-            </button>
-            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
-        </form>
-    );
-};
-
-const NoticeForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState(editingItem || { title: '', content: '', date: new Date().toISOString().split('T')[0] });
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(form);
-        setForm({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
-        setEditingItem(null);
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <input placeholder="Notice Title" className={inputClass} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
-            <textarea placeholder="Content" className={`${inputClass} h-32`} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} required />
-            <input type="date" className={inputClass} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
-            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
-                {editingItem ? 'Update Notice' : 'Post Notice'}
-            </button>
-            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
-        </form>
-    );
-};
-
-const TimetableForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState(editingItem || { subject: '', day: 'Monday', startTime: '', endTime: '' });
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(form);
-        setForm({ subject: '', day: 'Monday', startTime: '', endTime: '' });
-        setEditingItem(null);
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <input placeholder="Subject" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
-            <select className={inputClass} value={form.day} onChange={e => setForm({ ...form, day: e.target.value })}>
-                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-            <div className="grid grid-cols-2 gap-2">
-                <input type="time" className={inputClass} value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} required />
-                <input type="time" className={inputClass} value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} required />
-            </div>
-            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
-                {editingItem ? 'Update Schedule' : 'Add to Timetable'}
-            </button>
-            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
-        </form>
     );
 };
 
