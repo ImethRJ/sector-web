@@ -46,7 +46,14 @@ const About = () => {
                         </div>
                         <div className="flex gap-4">
                             <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-[#1a237e]">
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04 inter M12 21.355r8.618-3.04A12.02 12.02 0 003.382 18.315L12 21.355z" /></svg>
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 21.355l8.618-3.04A12.02 12.02 0 003.382 18.315L12 21.355z"
+                                    />
+                                </svg>
                             </div>
                             <div>
                                 <h4 className="font-bold text-[#1a237e]">Proven Results</h4>
