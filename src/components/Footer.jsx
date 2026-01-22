@@ -1,3 +1,4 @@
+import sectorLogo from '../assets/SectorLogo.jpg'; // Adjust path if needed
 const Footer = () => {
     return (
         <footer className="w-full bg-[#060E69] pt-20 pb-10 px-6 mt-auto">
@@ -5,7 +6,7 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 mb-16">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                            <img src="/src/assets/SectorLogo.jpg" alt="Logo" className="w-12 h-12 object-contain" />
+                            <img src={sectorLogo} alt="Logo" className="w-full h-full object-contain" />
                             <h2 className="text-white font-black text-2xl tracking-tighter uppercase">Sector</h2>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
