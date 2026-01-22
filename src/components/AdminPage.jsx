@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'; // Added useEffect
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
+import imageCompression from 'browser-image-compression';
 
 // --- FORM COMPONENTS (Moved outside to prevent re-mounting issues) ---
 
@@ -254,12 +255,24 @@ const ListItem = ({ title, subtitle, image, onEdit, onDelete }) => (
 const ImageUploadGroup = ({ value, onChange, inputClass }) => {
     const [useUrl, setUseUrl] = useState(true);
 
-    const handleFileChange = (e) => {
+
+
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => onChange(reader.result);
-            reader.readAsDataURL(file);
+            const options = {
+                maxSizeMB: 0.05, // Compress to ~50KB
+                maxWidthOrHeight: 500,
+                useWebWorker: true
+            };
+            try {
+                const compressedFile = await imageCompression(file, options);
+                const reader = new FileReader();
+                reader.onloadend = () => onChange(reader.result);
+                reader.readAsDataURL(compressedFile);
+            } catch (error) {
+                console.error("Compression error:", error);
+            }
         }
     };
 
