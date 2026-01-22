@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { db } from '../firebase'; // Adjust path as needed
-import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
+import { collection, getDocs, query, where, limit } from 'firebase/firestore';
 
 const TeachersHome = () => {
     const [featuredTeachers, setFeaturedTeachers] = useState([]);
@@ -10,18 +10,23 @@ const TeachersHome = () => {
     useEffect(() => {
         const fetchTeachers = async () => {
             try {
-                const querySnapshot = await getDocs(collection(db, "teachers"));
+                // Fetch only teachers where isFeatured is true
+                const q = query(
+                    collection(db, "teachers"),
+                    where("isFeatured", "==", true),
+                    limit(6) // Limit to 6 to keep the homepage layout clean
+                );
+
+                const querySnapshot = await getDocs(q);
                 const teachersData = querySnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
                 }));
 
-                // For "Featured", you can either filter here or 
-                // limit the query in Firestore
-                setFeaturedTeachers(teachersData.slice(0, 4));
+                setFeaturedTeachers(teachersData);
                 setLoading(false);
             } catch (error) {
-                console.error("Error fetching teachers: ", error);
+                console.error("Error fetching featured teachers: ", error);
                 setLoading(false);
             }
         };
@@ -29,7 +34,7 @@ const TeachersHome = () => {
         fetchTeachers();
     }, []);
 
-    if (loading) return <div className="py-24 text-center">Loading Faculty...</div>;
+    if (loading) return <div className="py-24 text-center text-[#1a237e] font-bold">Loading Faculty...</div>;
 
     return (
         <section id="Teachers" className="py-24 bg-slate-50 px-6">
@@ -39,22 +44,25 @@ const TeachersHome = () => {
                     <p className="text-gray-500 max-w-2xl mx-auto">Learn from the most experienced educators in the island, dedicated to your success.</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {/* FIXED: Removed the text comment from inside the JSX return */}
-                    {featuredTeachers.map((tutor) => (
-                        <div key={tutor.id} className="group bg-white p-6 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 text-center">
-                            <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform bg-indigo-50 flex items-center justify-center">
-                                {tutor.image ? (
-                                    <img src={tutor.image} alt={tutor.name} className="w-full h-full object-cover" />
-                                ) : (
-                                    <span className="text-3xl font-bold text-indigo-300">{tutor.name ? tutor.name[0] : '?'}</span>
-                                )}
+                {featuredTeachers.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {featuredTeachers.map((tutor) => (
+                            <div key={tutor.id} className="group bg-white p-6 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 text-center">
+                                <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform bg-indigo-50 flex items-center justify-center">
+                                    {tutor.image ? (
+                                        <img src={tutor.image} alt={tutor.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-3xl font-bold text-indigo-300">{tutor.name ? tutor.name[0] : '?'}</span>
+                                    )}
+                                </div>
+                                <h3 className="text-xl font-bold text-[#1a237e] mb-1">{tutor.name || "Unnamed Tutor"}</h3>
+                                <p className="text-blue-600 font-semibold text-sm uppercase tracking-wider">{tutor.subject || "Subject TBD"}</p>
                             </div>
-                            <h3 className="text-xl font-bold text-[#1a237e] mb-1">{tutor.name || "Unnamed Tutor"}</h3>
-                            <p className="text-blue-600 font-semibold text-sm uppercase tracking-wider">{tutor.subject || "Subject TBD"}</p>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-center text-slate-400 italic">No featured teachers assigned yet.</p>
+                )}
 
                 <div className="mt-16 text-center">
                     <Link to="/all-tutors" className="inline-block bg-[#1a237e] text-white px-10 py-4 rounded-full font-bold hover:bg-blue-800 transition shadow-lg">

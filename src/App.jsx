@@ -7,8 +7,8 @@ import TeachersHome from './components/TeachersHome'
 import TimetablePage from './components/TimetablePage'
 import NoticesPage from './components/NoticesPage'
 import AdminPage from './components/AdminPage'
+import AllTutors from './components/AllTutors' // 1. Import the new component
 
-// 1. We group the "Normal Website" components into one big component here
 const LandingPage = () => (
   <div className="flex flex-col min-h-screen">
     <SectorHome />
@@ -22,12 +22,17 @@ const LandingPage = () => (
 
 function App() {
   return (
-    // 2. We use Routes to decide which component to show based on the URL
     <Routes>
-      {/* If URL is just "/", show the normal website */}
       <Route path="/" element={<LandingPage />} />
 
-      {/* If URL matches your secret key, show ONLY the Admin Panel */}
+      {/* 2. Add the route for the All Tutors page */}
+      <Route path="/all-tutors" element={
+        <>
+          <AllTutors />
+          <Footer />
+        </>
+      } />
+
       <Route path="/sector19365" element={<AdminPage />} />
     </Routes>
   )

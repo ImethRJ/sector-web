@@ -7,17 +7,18 @@ import { storage } from "../firebase";
 // --- FORM COMPONENTS ---
 
 const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState({ name: '', subject: '', image: '' });
+    // Added isFeatured to the initial state
+    const [form, setForm] = useState({ name: '', subject: '', image: '', isFeatured: false });
 
     useEffect(() => {
         if (editingItem) setForm(editingItem);
-        else setForm({ name: '', subject: '', image: '' });
+        else setForm({ name: '', subject: '', image: '', isFeatured: false });
     }, [editingItem]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         onSubmit(form);
-        setForm({ name: '', subject: '', image: '' });
+        setForm({ name: '', subject: '', image: '', isFeatured: false });
         setEditingItem(null);
     };
 
@@ -26,6 +27,21 @@ const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
             <input placeholder="Full Name" className={inputClass} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
             <input placeholder="Subject Expertise" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
             <ImageUploadGroup value={form.image} onChange={(val) => setForm({ ...form, image: val })} inputClass={inputClass} />
+
+            {/* NEW: Featured Toggle */}
+            <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                <input
+                    type="checkbox"
+                    id="isFeatured"
+                    className="w-5 h-5 accent-indigo-600"
+                    checked={form.isFeatured}
+                    onChange={e => setForm({ ...form, isFeatured: e.target.checked })}
+                />
+                <label htmlFor="isFeatured" className="text-sm font-bold text-slate-700 cursor-pointer">
+                    Show on Homepage (Featured)
+                </label>
+            </div>
+
             <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
                 {editingItem ? 'Update Details' : 'Register Tutor'}
             </button>

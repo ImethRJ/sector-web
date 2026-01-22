@@ -48,10 +48,18 @@ export const DataProvider = ({ children }) => {
 
     // --- 2. Actions (Writing UI -> Cloud) ---
 
-    const addTeacher = async (teacher) => {
+    const addTeacher = async (teacherData) => {
         try {
-            await addDoc(collection(db, "teachers"), teacher);
-        } catch (err) { console.error("Error adding teacher:", err); }
+            await addDoc(collection(db, "teachers"), {
+                name: teacherData.name,
+                subject: teacherData.subject,
+                image: teacherData.image,
+                isFeatured: teacherData.isFeatured || false, // NEW: Capture the toggle value
+                createdAt: new Date()
+            });
+        } catch (error) {
+            console.error("Error adding teacher:", error);
+        }
     };
 
     const removeTeacher = async (id) => {
@@ -89,12 +97,19 @@ export const DataProvider = ({ children }) => {
 
     // --- Update Actions ---
 
-    const updateTeacher = async (teacher) => {
+    // Update the updateTeacher function
+    const updateTeacher = async (teacherData) => {
         try {
-            const { id, ...data } = teacher; // Extract ID and rest of data
-            const docRef = doc(db, "teachers", id);
-            await updateDoc(docRef, data);
-        } catch (err) { console.error("Error updating teacher:", err); }
+            const teacherRef = doc(db, "teachers", teacherData.id);
+            await updateDoc(teacherRef, {
+                name: teacherData.name,
+                subject: teacherData.subject,
+                image: teacherData.image,
+                isFeatured: teacherData.isFeatured // NEW: Update the toggle value
+            });
+        } catch (error) {
+            console.error("Error updating teacher:", error);
+        }
     };
 
     const updateNotice = async (notice) => {
