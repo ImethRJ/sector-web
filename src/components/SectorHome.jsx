@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import sectorLogo from './assets/SectorLogo.jpg'; // Adjust path if needed
 
 const SectorHome = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +42,7 @@ const SectorHome = () => {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
-              <img src="/src/assets/SectorLogo.jpg" alt="Logo" className="w-full h-full object-contain" />
+              <img src={sectorLogo} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <span className="text-white font-black tracking-tighter text-xl hidden sm:block">SECTOR</span>
           </div>
