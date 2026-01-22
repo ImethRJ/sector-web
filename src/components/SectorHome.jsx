@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import sectorLogo from './assets/SectorLogo.jpg'; // Adjust path if needed
+import sectorLogo from '../assets/SectorLogo.jpg'; // Adjust path if needed
 
 const SectorHome = () => {
   const [isOpen, setIsOpen] = useState(false);
