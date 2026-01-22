@@ -4,47 +4,41 @@ import { Link } from 'react-router-dom';
 
 const AdminPage = () => {
     const {
-        teachers, addTeacher, removeTeacher,
-        notices, addNotice, removeNotice,
-        timetable, addTimetableItem, removeTimetableItem
+        teachers, addTeacher, removeTeacher, updateTeacher,
+        notices, addNotice, removeNotice, updateNotice,
+        timetable, addTimetableItem, removeTimetableItem, updateTimetableItem
     } = useData();
 
     const [activeTab, setActiveTab] = useState('teachers');
+    const [editingItem, setEditingItem] = useState(null);
 
-    // Enhanced Delete Confirmation
     const confirmDelete = (id, type, callback) => {
         if (window.confirm(`Are you sure you want to remove this ${type}?`)) {
             callback(id);
         }
     };
 
-    // Shared Form Input Style
-    const inputClass = "w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all";
+    const inputClass = "w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white";
 
     return (
         <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8">
             <div className="max-w-6xl mx-auto">
-                {/* Header */}
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
                     <div>
                         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Admin Dashboard</h1>
-                        <p className="text-slate-500 mt-1">Manage your institution's content and schedules.</p>
+                        <p className="text-slate-500 mt-1">Manage content, schedules, and staff.</p>
                     </div>
                     <Link to="/" className="px-5 py-2 bg-white text-slate-600 font-semibold rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
                         ← View Website
                     </Link>
                 </header>
 
-                {/* Navigation Tabs */}
-                <nav className="flex bg-slate-200/50 p-1.5 rounded-2xl w-fit mb-10">
+                <nav className="flex bg-slate-200/50 p-1.5 rounded-2xl w-fit mb-10 overflow-x-auto">
                     {['teachers', 'notices', 'timetable'].map(tab => (
                         <button
                             key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-8 py-2.5 rounded-xl font-bold text-sm uppercase transition-all ${activeTab === tab
-                                    ? 'bg-white text-indigo-700 shadow-md'
-                                    : 'text-slate-500 hover:text-slate-700'
-                                }`}
+                            onClick={() => { setActiveTab(tab); setEditingItem(null); }}
+                            className={`px-8 py-2.5 rounded-xl font-bold text-sm uppercase transition-all whitespace-nowrap ${activeTab === tab ? 'bg-white text-indigo-700 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
                         >
                             {tab}
                         </button>
@@ -55,63 +49,217 @@ const AdminPage = () => {
                     {/* --- TEACHERS SECTION --- */}
                     {activeTab === 'teachers' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <section className="lg:col-span-1">
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                    <h3 className="font-bold text-xl mb-6 text-slate-800">Add New Tutor</h3>
-                                    <TeacherForm addTeacher={addTeacher} inputClass={inputClass} />
+                            <div className="lg:col-span-1">
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-8">
+                                    <h3 className="font-bold text-xl mb-6 text-slate-800">{editingItem ? 'Update Tutor' : 'Add New Tutor'}</h3>
+                                    <TeacherForm
+                                        onSubmit={editingItem ? updateTeacher : addTeacher}
+                                        editingItem={editingItem}
+                                        setEditingItem={setEditingItem}
+                                        inputClass={inputClass}
+                                    />
                                 </div>
-                            </section>
-
-                            <section className="lg:col-span-2 space-y-4">
-                                {teachers.length === 0 && <p className="text-slate-400 italic">No tutors found.</p>}
+                            </div>
+                            <div className="lg:col-span-2 space-y-3">
                                 {teachers.map(t => (
-                                    <div key={t.id} className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center overflow-hidden">
-                                                {t.image ? <img src={t.image} alt="" className="w-full h-full object-cover" /> : <span className="text-indigo-600 font-bold">{t.name[0]}</span>}
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-slate-800">{t.name}</p>
-                                                <p className="text-sm text-indigo-600 font-medium">{t.subject}</p>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={() => confirmDelete(t.id, 'teacher', removeTeacher)}
-                                            className="px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors font-semibold"
-                                        >
-                                            Remove
-                                        </button>
-                                    </div>
+                                    <ListItem
+                                        key={t.id}
+                                        title={t.name}
+                                        subtitle={t.subject}
+                                        image={t.image}
+                                        onEdit={() => setEditingItem(t)}
+                                        onDelete={() => confirmDelete(t.id, 'teacher', removeTeacher)}
+                                    />
                                 ))}
-                            </section>
+                            </div>
                         </div>
                     )}
 
-                    {/* ... Similar Logic for Notices and Timetable ... */}
+                    {/* --- NOTICES SECTION --- */}
+                    {activeTab === 'notices' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="lg:col-span-1">
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-8">
+                                    <h3 className="font-bold text-xl mb-6 text-slate-800">{editingItem ? 'Update Notice' : 'Post Notice'}</h3>
+                                    <NoticeForm
+                                        onSubmit={editingItem ? updateNotice : addNotice}
+                                        editingItem={editingItem}
+                                        setEditingItem={setEditingItem}
+                                        inputClass={inputClass}
+                                    />
+                                </div>
+                            </div>
+                            <div className="lg:col-span-2 space-y-3">
+                                {notices.map(n => (
+                                    <ListItem
+                                        key={n.id}
+                                        title={n.title}
+                                        subtitle={n.date}
+                                        onEdit={() => setEditingItem(n)}
+                                        onDelete={() => confirmDelete(n.id, 'notice', removeNotice)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* --- TIMETABLE SECTION --- */}
+                    {activeTab === 'timetable' && (
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <div className="lg:col-span-1">
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-8">
+                                    <h3 className="font-bold text-xl mb-6 text-slate-800">{editingItem ? 'Update Schedule' : 'Add Schedule'}</h3>
+                                    <TimetableForm
+                                        onSubmit={editingItem ? updateTimetableItem : addTimetableItem}
+                                        editingItem={editingItem}
+                                        setEditingItem={setEditingItem}
+                                        inputClass={inputClass}
+                                    />
+                                </div>
+                            </div>
+                            <div className="lg:col-span-2 space-y-3">
+                                {timetable.map(item => (
+                                    <ListItem
+                                        key={item.id}
+                                        title={`${item.subject} (${item.day})`}
+                                        subtitle={`${item.startTime} - ${item.endTime}`}
+                                        onEdit={() => setEditingItem(item)}
+                                        onDelete={() => confirmDelete(item.id, 'schedule', removeTimetableItem)}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </main>
             </div>
         </div>
     );
 };
 
-// Extracted Sub-component for better readability
-const TeacherForm = ({ addTeacher, inputClass }) => {
-    const [form, setForm] = useState({ name: '', subject: '', image: '' });
+// --- SHARED UI COMPONENTS ---
+
+const ListItem = ({ title, subtitle, image, onEdit, onDelete }) => (
+    <div className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="flex items-center gap-4">
+            {image !== undefined && (
+                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center overflow-hidden border border-slate-100">
+                    {image ? <img src={image} alt="" className="w-full h-full object-cover" /> : <span className="text-indigo-600 font-bold">{title[0]}</span>}
+                </div>
+            )}
+            <div>
+                <p className="font-bold text-slate-800">{title}</p>
+                <p className="text-sm text-indigo-600 font-medium">{subtitle}</p>
+            </div>
+        </div>
+        <div className="flex gap-2">
+            <button onClick={onEdit} className="px-3 py-1.5 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors font-semibold text-sm">Edit</button>
+            <button onClick={onDelete} className="px-3 py-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors font-semibold text-sm">Remove</button>
+        </div>
+    </div>
+);
+
+const ImageUploadGroup = ({ value, onChange, inputClass }) => {
+    const [useUrl, setUseUrl] = useState(true);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => onChange(reader.result);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    return (
+        <div className="space-y-2">
+            <div className="flex gap-4 mb-2">
+                <button type="button" onClick={() => setUseUrl(true)} className={`text-xs font-bold uppercase ${useUrl ? 'text-indigo-600' : 'text-slate-400'}`}>URL</button>
+                <button type="button" onClick={() => setUseUrl(false)} className={`text-xs font-bold uppercase ${!useUrl ? 'text-indigo-600' : 'text-slate-400'}`}>Upload</button>
+            </div>
+            {useUrl ? (
+                <input placeholder="Image URL" className={inputClass} value={value} onChange={e => onChange(e.target.value)} />
+            ) : (
+                <input type="file" accept="image/*" className={inputClass} onChange={handleFileChange} />
+            )}
+        </div>
+    );
+};
+
+// --- FORM COMPONENTS ---
+
+const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
+    const [form, setForm] = useState(editingItem || { name: '', subject: '', image: '' });
+
+    // Update form if editingItem changes
+    useState(() => { if (editingItem) setForm(editingItem) }, [editingItem]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addTeacher(form);
+        onSubmit(form);
         setForm({ name: '', subject: '', image: '' });
+        setEditingItem(null);
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <input placeholder="Full Name" className={inputClass} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required />
             <input placeholder="Subject Expertise" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
-            <input placeholder="Image URL (Optional)" className={inputClass} value={form.image} onChange={e => setForm({ ...form, image: e.target.value })} />
-            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-[0.98]">
-                Register Tutor
+            <ImageUploadGroup value={form.image} onChange={(val) => setForm({ ...form, image: val })} inputClass={inputClass} />
+            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
+                {editingItem ? 'Update Details' : 'Register Tutor'}
             </button>
+            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
+        </form>
+    );
+};
+
+const NoticeForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
+    const [form, setForm] = useState(editingItem || { title: '', content: '', date: new Date().toISOString().split('T')[0] });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(form);
+        setForm({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
+        setEditingItem(null);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input placeholder="Notice Title" className={inputClass} value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} required />
+            <textarea placeholder="Content" className={`${inputClass} h-32`} value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} required />
+            <input type="date" className={inputClass} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
+                {editingItem ? 'Update Notice' : 'Post Notice'}
+            </button>
+            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
+        </form>
+    );
+};
+
+const TimetableForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
+    const [form, setForm] = useState(editingItem || { subject: '', day: 'Monday', startTime: '', endTime: '' });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onSubmit(form);
+        setForm({ subject: '', day: 'Monday', startTime: '', endTime: '' });
+        setEditingItem(null);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <input placeholder="Subject" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
+            <select className={inputClass} value={form.day} onChange={e => setForm({ ...form, day: e.target.value })}>
+                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+            <div className="grid grid-cols-2 gap-2">
+                <input type="time" className={inputClass} value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} required />
+                <input type="time" className={inputClass} value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} required />
+            </div>
+            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
+                {editingItem ? 'Update Schedule' : 'Add to Timetable'}
+            </button>
+            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
         </form>
     );
 };
