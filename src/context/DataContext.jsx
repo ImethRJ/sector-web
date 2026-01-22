@@ -1,14 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { db } from '../firebase'; // Ensure you have your firebase.js config file
-import {
-    collection,
-    onSnapshot,
-    addDoc,
-    deleteDoc,
-    doc,
-    query,
-    orderBy
-} from 'firebase/firestore';
+import { db } from '../firebase';
+import { collection, onSnapshot, addDoc, deleteDoc, doc, updateDoc, query, orderBy } from 'firebase/firestore';
 
 const DataContext = createContext();
 
@@ -18,80 +10,50 @@ export const DataProvider = ({ children }) => {
     const [timetable, setTimetable] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // --- 1. Real-time Listeners (Syncing Cloud -> UI) ---
     useEffect(() => {
-        // Listen to Notices (Ordered by latest first)
-        const qNotices = query(collection(db, "notices"), orderBy("date", "desc"));
+        const qNotices = query(collection(db, "notices"), orderBy("createdAt", "desc"));
         const unsubNotices = onSnapshot(qNotices, (snapshot) => {
-            setNotices(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+            setNotices(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         });
 
-        // Listen to Teachers
         const unsubTeachers = onSnapshot(collection(db, "teachers"), (snapshot) => {
-            setTeachers(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+            setTeachers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
         });
 
-        // Listen to Timetable
         const unsubTimetable = onSnapshot(collection(db, "timetable"), (snapshot) => {
-            setTimetable(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+            setTimetable(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
             setLoading(false);
         });
 
-        // Cleanup listeners when app unmounts
-        return () => {
-            unsubNotices();
-            unsubTeachers();
-            unsubTimetable();
-        };
+        return () => { unsubNotices(); unsubTeachers(); unsubTimetable(); };
     }, []);
 
-    // --- 2. Actions (Writing UI -> Cloud) ---
-
-    const addTeacher = async (teacher) => {
-        try {
-            await addDoc(collection(db, "teachers"), teacher);
-        } catch (err) { console.error("Error adding teacher:", err); }
+    // Helper for Updates
+    const updateFirebaseDoc = async (col, id, updatedData) => {
+        const docRef = doc(db, col, id);
+        const dataToSave = { ...updatedData };
+        delete dataToSave.id; // Firebase doesn't want the ID inside the document
+        await updateDoc(docRef, dataToSave);
     };
 
-    const removeTeacher = async (id) => {
-        try {
-            await deleteDoc(doc(db, "teachers", id));
-        } catch (err) { console.error("Error removing teacher:", err); }
-    };
+    const addTeacher = async (teacher) => await addDoc(collection(db, "teachers"), teacher);
+    const updateTeacher = async (teacher) => await updateFirebaseDoc("teachers", teacher.id, teacher);
+    const removeTeacher = async (id) => await deleteDoc(doc(db, "teachers", id));
 
-    const addNotice = async (notice) => {
-        try {
-            await addDoc(collection(db, "notices"), {
-                ...notice,
-                createdAt: new Date() // Useful for sorting
-            });
-        } catch (err) { console.error("Error adding notice:", err); }
-    };
+    const addNotice = async (notice) => await addDoc(collection(db, "notices"), { ...notice, createdAt: new Date() });
+    const updateNotice = async (notice) => await updateFirebaseDoc("notices", notice.id, notice);
+    const removeNotice = async (id) => await deleteDoc(doc(db, "notices", id));
 
-    const removeNotice = async (id) => {
-        try {
-            await deleteDoc(doc(db, "notices", id));
-        } catch (err) { console.error("Error removing notice:", id, err); }
-    };
-
-    const addTimetableItem = async (item) => {
-        try {
-            await addDoc(collection(db, "timetable"), item);
-        } catch (err) { console.error("Error adding timetable item:", err); }
-    };
-
-    const removeTimetableItem = async (id) => {
-        try {
-            await deleteDoc(doc(db, "timetable", id));
-        } catch (err) { console.error("Error removing timetable item:", err); }
-    };
+    const addTimetableItem = async (item) => await addDoc(collection(db, "timetable"), item);
+    const updateTimetableItem = async (item) => await updateFirebaseDoc("timetable", item.id, item);
+    const removeTimetableItem = async (id) => await deleteDoc(doc(db, "timetable", id));
 
     return (
         <DataContext.Provider value={{
             teachers, notices, timetable, loading,
-            addTeacher, removeTeacher,
-            addNotice, removeNotice,
-            addTimetableItem, removeTimetableItem
+            addTeacher, removeTeacher, updateTeacher,
+            addNotice, removeNotice, updateNotice,
+            addTimetableItem, removeTimetableItem, updateTimetableItem
         }}>
             {children}
         </DataContext.Provider>
