@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDZsRuM-4fYMcBAlCZ3js8ra1pywT2-U1I",
@@ -13,3 +15,5 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app); // This connects to your Mumbai database
+// ... your existing app/db config
+export const storage = getStorage(app);

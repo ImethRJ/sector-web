@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'; // Added useEffect
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
-import imageCompression from 'browser-image-compression';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase"; // Adjust path
 
 // --- FORM COMPONENTS (Moved outside to prevent re-mounting issues) ---
 
@@ -254,25 +255,37 @@ const ListItem = ({ title, subtitle, image, onEdit, onDelete }) => (
 
 const ImageUploadGroup = ({ value, onChange, inputClass }) => {
     const [useUrl, setUseUrl] = useState(true);
-
-
+    const [uploading, setUploading] = useState(false);
 
     const handleFileChange = async (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const options = {
-                maxSizeMB: 0.05, // Compress to ~50KB
-                maxWidthOrHeight: 500,
-                useWebWorker: true
-            };
-            try {
-                const compressedFile = await imageCompression(file, options);
-                const reader = new FileReader();
-                reader.onloadend = () => onChange(reader.result);
-                reader.readAsDataURL(compressedFile);
-            } catch (error) {
-                console.error("Compression error:", error);
-            }
+        if (!file) return;
+
+        // Check file size (optional: e.g., limit to 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+            alert("File is too large. Please choose an image under 2MB.");
+            return;
+        }
+
+        try {
+            setUploading(true);
+
+            // 1. Create a unique reference in Storage
+            const storageRef = ref(storage, `teachers/${Date.now()}_${file.name}`);
+
+            // 2. Upload the file
+            const snapshot = await uploadBytes(storageRef, file);
+
+            // 3. Get the public URL
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            // 4. Update the form state with the URL
+            onChange(downloadURL);
+            setUploading(false);
+        } catch (error) {
+            console.error("Upload error:", error);
+            setUploading(false);
+            alert("Upload failed. Check your Firebase Storage rules.");
         }
     };
 
@@ -285,7 +298,10 @@ const ImageUploadGroup = ({ value, onChange, inputClass }) => {
             {useUrl ? (
                 <input placeholder="Image URL" className={inputClass} value={value || ''} onChange={e => onChange(e.target.value)} />
             ) : (
-                <input type="file" accept="image/*" className={inputClass} onChange={handleFileChange} />
+                <div className="flex flex-col gap-2">
+                    <input type="file" accept="image/*" className={inputClass} onChange={handleFileChange} disabled={uploading} />
+                    {uploading && <p className="text-xs text-indigo-600 font-bold animate-pulse">Uploading to Storage...</p>}
+                </div>
             )}
         </div>
     );
