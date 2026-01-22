@@ -40,7 +40,7 @@ const TeachersHome = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    // Inside TeachersHome.jsx - Update the map section
+                    {/* FIXED: Removed the text comment from inside the JSX return */}
                     {featuredTeachers.map((tutor) => (
                         <div key={tutor.id} className="group bg-white p-6 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-slate-100 text-center">
                             <div className="w-32 h-32 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:scale-105 transition-transform bg-indigo-50 flex items-center justify-center">
@@ -54,7 +54,6 @@ const TeachersHome = () => {
                             <p className="text-blue-600 font-semibold text-sm uppercase tracking-wider">{tutor.subject || "Subject TBD"}</p>
                         </div>
                     ))}
-
                 </div>
 
                 <div className="mt-16 text-center">
