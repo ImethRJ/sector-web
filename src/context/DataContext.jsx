@@ -7,7 +7,8 @@ import {
     deleteDoc,
     doc,
     query,
-    orderBy
+    orderBy,
+    updateDoc // <--- Add this
 } from 'firebase/firestore';
 
 const DataContext = createContext();
@@ -86,12 +87,38 @@ export const DataProvider = ({ children }) => {
         } catch (err) { console.error("Error removing timetable item:", err); }
     };
 
+    // --- Update Actions ---
+
+    const updateTeacher = async (teacher) => {
+        try {
+            const { id, ...data } = teacher; // Extract ID and rest of data
+            const docRef = doc(db, "teachers", id);
+            await updateDoc(docRef, data);
+        } catch (err) { console.error("Error updating teacher:", err); }
+    };
+
+    const updateNotice = async (notice) => {
+        try {
+            const { id, ...data } = notice;
+            const docRef = doc(db, "notices", id);
+            await updateDoc(docRef, data);
+        } catch (err) { console.error("Error updating notice:", err); }
+    };
+
+    const updateTimetableItem = async (item) => {
+        try {
+            const { id, ...data } = item;
+            const docRef = doc(db, "timetable", id);
+            await updateDoc(docRef, data);
+        } catch (err) { console.error("Error updating timetable:", err); }
+    };
+
     return (
         <DataContext.Provider value={{
             teachers, notices, timetable, loading,
-            addTeacher, removeTeacher,
-            addNotice, removeNotice,
-            addTimetableItem, removeTimetableItem
+            addTeacher, removeTeacher, updateTeacher, // Added updateTeacher
+            addNotice, removeNotice, updateNotice,    // Added updateNotice
+            addTimetableItem, removeTimetableItem, updateTimetableItem // Added updateTimetableItem
         }}>
             {children}
         </DataContext.Provider>

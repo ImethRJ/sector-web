@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'; // Added useEffect
+import { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebase"; // Adjust path
+import { storage } from "../firebase";
 
-// --- FORM COMPONENTS (Moved outside to prevent re-mounting issues) ---
+// --- FORM COMPONENTS ---
 
 const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
     const [form, setForm] = useState({ name: '', subject: '', image: '' });
@@ -29,7 +29,11 @@ const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
             <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
                 {editingItem ? 'Update Details' : 'Register Tutor'}
             </button>
-            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
+            {editingItem && (
+                <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">
+                    Cancel Edit
+                </button>
+            )}
         </form>
     );
 };
@@ -141,7 +145,6 @@ const AdminPage = () => {
                 </nav>
 
                 <main>
-                    {/* --- TEACHERS SECTION --- */}
                     {activeTab === 'teachers' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-1">
@@ -170,7 +173,6 @@ const AdminPage = () => {
                         </div>
                     )}
 
-                    {/* --- NOTICES SECTION --- */}
                     {activeTab === 'notices' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-1">
@@ -198,7 +200,6 @@ const AdminPage = () => {
                         </div>
                     )}
 
-                    {/* --- TIMETABLE SECTION --- */}
                     {activeTab === 'timetable' && (
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-1">
@@ -238,7 +239,7 @@ const ListItem = ({ title, subtitle, image, onEdit, onDelete }) => (
         <div className="flex items-center gap-4">
             {image !== undefined && (
                 <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center overflow-hidden border border-slate-100">
-                    {image ? <img src={image} alt="" className="w-full h-full object-cover" /> : <span className="text-indigo-600 font-bold">{title[0]}</span>}
+                    {image ? <img src={image} alt="" className="w-full h-full object-cover" /> : <span className="text-indigo-600 font-bold">{title ? title[0] : '?'}</span>}
                 </div>
             )}
             <div>
@@ -261,7 +262,6 @@ const ImageUploadGroup = ({ value, onChange, inputClass }) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Check file size (optional: e.g., limit to 2MB)
         if (file.size > 2 * 1024 * 1024) {
             alert("File is too large. Please choose an image under 2MB.");
             return;
@@ -269,17 +269,9 @@ const ImageUploadGroup = ({ value, onChange, inputClass }) => {
 
         try {
             setUploading(true);
-
-            // 1. Create a unique reference in Storage
             const storageRef = ref(storage, `teachers/${Date.now()}_${file.name}`);
-
-            // 2. Upload the file
             const snapshot = await uploadBytes(storageRef, file);
-
-            // 3. Get the public URL
             const downloadURL = await getDownloadURL(snapshot.ref);
-
-            // 4. Update the form state with the URL
             onChange(downloadURL);
             setUploading(false);
         } catch (error) {
