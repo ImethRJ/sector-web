@@ -1,34 +1,23 @@
 import { useState, useEffect } from 'react';
-import sectorLogo from '../assets/SectorLogo.jpg'; // Adjust path if needed
+import sectorLogo from '../assets/SectorLogo.jpg'; 
 
 const SectorHome = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('Home');
 
-  // Logic to highlight the navbar item based on scroll position
   useEffect(() => {
-    const observerOptions = {
-      root: null,
-      threshold: 0.6, // Highlight when 60% of the section is visible
-    };
-
+    const observerOptions = { root: null, threshold: 0.6 };
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
+        if (entry.isIntersecting) setActiveSection(entry.target.id);
       });
     };
-
     const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    // Sections to observe
     const sections = ['Home', 'About', 'Teachers', 'Timetable', 'Notices'];
     sections.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
-
     return () => observer.disconnect();
   }, []);
 
@@ -39,25 +28,17 @@ const SectorHome = () => {
       {/* Navigation */}
       <nav className="fixed top-4 md:top-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[1400px] z-50">
         <div className="bg-[#1a237e]/90 backdrop-blur-lg px-6 md:px-10 py-4 md:py-5 rounded-[2rem] md:rounded-full flex justify-between items-center shadow-2xl border border-white/20">
-          {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
-              <img src={sectorLogo} alt="Logo" className="w-full h-full object-contain" />
+              <img src={sectorLogo} alt="Sector Higher Education Institute Panadura Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="text-white font-black tracking-tighter text-xl hidden sm:block">SECTOR</span>
+            <span className="text-white font-black tracking-tighter text-xl hidden sm:block uppercase">Sector</span>
           </div>
 
-          {/* Desktop Links */}
           <ul className="hidden md:flex items-center gap-8 lg:gap-14 text-white font-semibold text-sm lg:text-base">
             {navItems.map((item) => (
               <li key={item} className="relative group">
-                <a
-                  href={`#${item}`}
-                  className={`transition-colors duration-300 ${activeSection === item ? 'text-yellow-400' : 'hover:text-yellow-400'}`}
-                >
-                  {item}
-                </a>
-                {/* Underline - stays visible if activeSection matches item */}
+                <a href={`#${item}`} className={`transition-colors duration-300 ${activeSection === item ? 'text-yellow-400' : 'hover:text-yellow-400'}`}>{item}</a>
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-yellow-400 transition-all duration-300 ${activeSection === item ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </li>
             ))}
