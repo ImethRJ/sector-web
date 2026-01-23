@@ -1,15 +1,7 @@
-import { useState } from 'react';
 import { useData } from '../context/DataContext';
 
 const NoticesPage = () => {
-    const [filter, setFilter] = useState('All');
-    const { notices, loading } = useData(); // Added loading state from Firebase context
-
-    const categories = ['All', 'Academic', 'Exam', 'Holiday', 'General'];
-
-    const filteredNotices = filter === 'All'
-        ? notices
-        : notices.filter(n => n.category === filter);
+    const { notices, loading } = useData();
 
     // Helper to format date if it comes as a Firebase Timestamp or string
     const formatDate = (dateValue) => {
@@ -36,25 +28,9 @@ const NoticesPage = () => {
                     <p className="text-gray-500 max-w-2xl mx-auto">Stay updated with the latest announcements and academic news from Sector Institute.</p>
                 </div>
 
-                {/* Category Filter */}
-                <div className="flex flex-wrap justify-center gap-3 mb-12">
-                    {categories.map((cat) => (
-                        <button
-                            key={cat}
-                            onClick={() => setFilter(cat)}
-                            className={`px-6 py-2 rounded-full font-bold text-sm uppercase transition-all ${filter === cat
-                                ? 'bg-[#1a237e] text-white shadow-lg'
-                                : 'bg-white text-gray-600 border border-slate-200 hover:bg-slate-100'
-                                }`}
-                        >
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-
                 {/* Notices List */}
                 <div className="space-y-6">
-                    {filteredNotices.map((notice) => {
+                    {notices.map((notice) => {
                         const { day, month } = formatDate(notice.date);
                         return (
                             <div
@@ -76,7 +52,6 @@ const NoticesPage = () => {
                                         </span>
                                     </div>
                                     <h3 className="text-2xl font-bold text-[#1a237e] mb-2">{notice.title}</h3>
-                                    {/* Changed notice.description to notice.content to match AdminPage.jsx */}
                                     <p className="text-gray-500 leading-relaxed">{notice.content || notice.description}</p>
                                 </div>
 
@@ -94,9 +69,9 @@ const NoticesPage = () => {
                 </div>
 
                 {/* Empty State */}
-                {filteredNotices.length === 0 && (
+                {notices.length === 0 && (
                     <div className="text-center py-20 bg-white rounded-[2.5rem] border border-dashed border-slate-300">
-                        <p className="text-gray-400 font-medium">No notices found in this category.</p>
+                        <p className="text-gray-400 font-medium">No notices available at the moment.</p>
                     </div>
                 )}
             </div>
