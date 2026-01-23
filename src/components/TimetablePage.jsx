@@ -13,7 +13,7 @@ const TimetablePage = () => {
         
         <div className="flex flex-col gap-4">
           <a 
-            href="/assets/timetable.pdf" 
+            href="/timetable.pdf" 
             target="_blank" 
             rel="noreferrer"
             className="bg-[#1a237e] text-white px-8 py-4 rounded-2xl font-bold hover:scale-[1.02] transition-transform shadow-lg"
@@ -21,7 +21,7 @@ const TimetablePage = () => {
             View PDF (Online)
           </a>
           <a 
-            href="/assets/timetable.pdf" 
+            href="/timetable.pdf" 
             download
             className="text-[#1a237e] font-bold hover:underline"
           >
@@ -32,3 +32,5 @@ const TimetablePage = () => {
     </section>
   );
 };
+
+export default TimetablePage;
