@@ -7,7 +7,6 @@ import { storage } from "../firebase";
 // --- FORM COMPONENTS ---
 
 const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    // Added isFeatured to the initial state
     const [form, setForm] = useState({ name: '', subject: '', image: '', isFeatured: false });
 
     useEffect(() => {
@@ -28,7 +27,6 @@ const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
             <input placeholder="Subject Expertise" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
             <ImageUploadGroup value={form.image} onChange={(val) => setForm({ ...form, image: val })} inputClass={inputClass} />
 
-            {/* NEW: Featured Toggle */}
             <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                 <input
                     type="checkbox"
@@ -82,46 +80,12 @@ const NoticeForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
     );
 };
 
-const TimetableForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState({ subject: '', day: 'Monday', startTime: '', endTime: '' });
-
-    useEffect(() => {
-        if (editingItem) setForm(editingItem);
-        else setForm({ subject: '', day: 'Monday', startTime: '', endTime: '' });
-    }, [editingItem]);
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit(form);
-        setForm({ subject: '', day: 'Monday', startTime: '', endTime: '' });
-        setEditingItem(null);
-    };
-
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <input placeholder="Subject" className={inputClass} value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} required />
-            <select className={inputClass} value={form.day} onChange={e => setForm({ ...form, day: e.target.value })}>
-                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => <option key={d} value={d}>{d}</option>)}
-            </select>
-            <div className="grid grid-cols-2 gap-2">
-                <input type="time" className={inputClass} value={form.startTime} onChange={e => setForm({ ...form, startTime: e.target.value })} required />
-                <input type="time" className={inputClass} value={form.endTime} onChange={e => setForm({ ...form, endTime: e.target.value })} required />
-            </div>
-            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 shadow-lg transition-all">
-                {editingItem ? 'Update Schedule' : 'Add to Timetable'}
-            </button>
-            {editingItem && <button type="button" onClick={() => setEditingItem(null)} className="w-full text-slate-500 font-semibold py-2">Cancel</button>}
-        </form>
-    );
-};
-
 // --- MAIN ADMIN PAGE ---
 
 const AdminPage = () => {
     const {
         teachers, addTeacher, removeTeacher, updateTeacher,
-        notices, addNotice, removeNotice, updateNotice,
-        timetable, addTimetableItem, removeTimetableItem, updateTimetableItem
+        notices, addNotice, removeNotice, updateNotice
     } = useData();
 
     const [activeTab, setActiveTab] = useState('teachers');
@@ -141,7 +105,7 @@ const AdminPage = () => {
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
                     <div>
                         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Admin Dashboard</h1>
-                        <p className="text-slate-500 mt-1">Manage content, schedules, and staff.</p>
+                        <p className="text-slate-500 mt-1">Manage institute content and staff.</p>
                     </div>
                     <Link to="/" className="px-5 py-2 bg-white text-slate-600 font-semibold rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
                         ← View Website
@@ -149,7 +113,7 @@ const AdminPage = () => {
                 </header>
 
                 <nav className="flex bg-slate-200/50 p-1.5 rounded-2xl w-fit mb-10 overflow-x-auto">
-                    {['teachers', 'notices', 'timetable'].map(tab => (
+                    {['teachers', 'notices'].map(tab => (
                         <button
                             key={tab}
                             onClick={() => { setActiveTab(tab); setEditingItem(null); }}
@@ -210,33 +174,6 @@ const AdminPage = () => {
                                         subtitle={n.date}
                                         onEdit={() => setEditingItem(n)}
                                         onDelete={() => confirmDelete(n.id, 'notice', removeNotice)}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {activeTab === 'timetable' && (
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <div className="lg:col-span-1">
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-8">
-                                    <h3 className="font-bold text-xl mb-6 text-slate-800">{editingItem ? 'Update Schedule' : 'Add Schedule'}</h3>
-                                    <TimetableForm
-                                        onSubmit={editingItem ? updateTimetableItem : addTimetableItem}
-                                        editingItem={editingItem}
-                                        setEditingItem={setEditingItem}
-                                        inputClass={inputClass}
-                                    />
-                                </div>
-                            </div>
-                            <div className="lg:col-span-2 space-y-3">
-                                {timetable.map(item => (
-                                    <ListItem
-                                        key={item.id}
-                                        title={`${item.subject} (${item.day})`}
-                                        subtitle={`${item.startTime} - ${item.endTime}`}
-                                        onEdit={() => setEditingItem(item)}
-                                        onDelete={() => confirmDelete(item.id, 'schedule', removeTimetableItem)}
                                     />
                                 ))}
                             </div>

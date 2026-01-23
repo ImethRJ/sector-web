@@ -1,19 +1,26 @@
 import { useState, useEffect } from 'react';
-import sectorLogo from '../assets/SectorLogo.jpg'; // Adjust path if needed
+import sectorLogo from '../assets/SectorLogo.jpg';
 
 const SectorHome = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('Home');
 
-  // Logic to highlight the navbar item based on scroll position
   useEffect(() => {
     const observerOptions = {
       root: null,
-      threshold: 0.6, // Highlight when 60% of the section is visible
+      /**
+       * FIX: rootMargin acts like a "detection window". 
+       * -120px from the top ignores the space occupied by your fixed navbar.
+       * -70% from the bottom ensures that only the section currently at 
+       * the top of the viewport triggers the "Active" state.
+       */
+      rootMargin: '-120px 0px -70% 0px', 
+      threshold: 0,
     };
 
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
+        // Only update the active section when it enters the top detection window
         if (entry.isIntersecting) {
           setActiveSection(entry.target.id);
         }
@@ -22,7 +29,7 @@ const SectorHome = () => {
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
 
-    // Sections to observe
+    // IDs must match the section tags in your other components exactly
     const sections = ['Home', 'About', 'Teachers', 'Timetable', 'Notices'];
     sections.forEach((id) => {
       const el = document.getElementById(id);
@@ -33,6 +40,8 @@ const SectorHome = () => {
   }, []);
 
   const navItems = ['Home', 'About', 'Teachers', 'Timetable', 'Notices'];
+
+  const handleNavClick = () => setIsOpen(false);
 
   return (
     <div className="font-sans antialiased text-slate-900 bg-slate-50">
@@ -57,7 +66,7 @@ const SectorHome = () => {
                 >
                   {item}
                 </a>
-                {/* Underline - stays visible if activeSection matches item */}
+                {/* Underline Indicator */}
                 <span className={`absolute -bottom-1 left-0 h-0.5 bg-yellow-400 transition-all duration-300 ${activeSection === item ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
               </li>
             ))}
@@ -76,7 +85,7 @@ const SectorHome = () => {
           <div className="md:hidden mt-3 w-full bg-[#1a237e] rounded-3xl shadow-2xl border border-white/10 overflow-hidden animate-in fade-in zoom-in-95 duration-300">
             <ul className="flex flex-col text-white font-medium p-6 gap-2">
               {navItems.map((item) => (
-                <li key={item} onClick={() => setIsOpen(false)}>
+                <li key={item} onClick={handleNavClick}>
                   <a
                     href={`#${item}`}
                     className={`block py-4 px-5 rounded-xl transition-all ${activeSection === item ? 'bg-yellow-400 text-blue-900' : 'hover:bg-white/10'}`}
@@ -90,7 +99,7 @@ const SectorHome = () => {
         )}
       </nav>
 
-      {/* Hero Section - Added id="Home" */}
+      {/* Hero Section */}
       <section id="Home" className="relative min-h-screen lg:min-h-[90vh] w-full flex items-center justify-center md:justify-start px-6 md:px-[10%] overflow-hidden">
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"

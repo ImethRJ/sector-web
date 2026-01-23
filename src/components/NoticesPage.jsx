@@ -21,7 +21,8 @@ const NoticesPage = () => {
     }
 
     return (
-        <section id="Notices" className="py-24 bg-slate-50 px-6 min-h-screen">
+        /* FIX: Added scroll-mt-32 to the className for proper navbar alignment */
+        <section id="Notices" className="py-24 scroll-mt-32 bg-[#f8fafc] px-6 min-h-screen flex flex-col items-center justify-center">
             <div className="max-w-[1200px] mx-auto">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-black text-[#1a237e] mb-4 uppercase">Important Notices</h2>

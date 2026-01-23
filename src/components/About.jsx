@@ -1,6 +1,10 @@
 const About = () => {
     return (
-        <section className="py-20 px-8 bg-white" id="About"> {/* Changed 'about' to 'About' to match your nav links */}
+        /* FIX: Moved scroll-mt-32 inside the className string */
+        <section 
+            className="py-20 px-8 bg-white scroll-mt-32" 
+            id="About"
+        > 
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
 
                 {/* Left Side: Visual Stats / Image */}

@@ -37,7 +37,8 @@ const TeachersHome = () => {
     if (loading) return <div className="py-24 text-center text-[#1a237e] font-bold">Loading Faculty...</div>;
 
     return (
-        <section id="Teachers" className="py-24 bg-slate-50 px-6">
+        /* FIX: Added scroll-mt-32 to ensure the fixed navbar doesn't cover the title when scrolling */
+        <section id="Teachers" className="py-24 scroll-mt-32 bg-[#f8fafc] px-6 min-h-screen flex flex-col items-center justify-center">
             <div className="max-w-[1400px] mx-auto">
                 <div className="text-center mb-16">
                     <h2 className="text-4xl font-black text-[#1a237e] mb-4 uppercase">Our Expert Faculty</h2>
