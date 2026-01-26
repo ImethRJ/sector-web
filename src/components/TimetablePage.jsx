@@ -47,9 +47,9 @@ const TimetablePage = () => {
            <Calendar size={14} className="text-indigo-600" />
            <span className="text-indigo-700 font-bold tracking-widest text-[10px] uppercase">Academic Calendar</span>
         </div>
-        <h1 id="timetable-title" className="text-4xl md:text-5xl lg:text-6xl font-black text-[#1a237e] mb-6 tracking-tight uppercase">
+        <h2 id="timetable-title" className="text-4xl md:text-5xl lg:text-6xl font-black text-[#1a237e] mb-6 tracking-tight uppercase">
           Learning <span className="text-blue-600">Schedule</span>
-        </h1>
+        </h2>
         <p className="text-slate-500 max-w-xl mx-auto text-lg font-medium leading-relaxed">
           Stay synchronized with your academic journey. Access the most up-to-date class schedules for Sector Institute.
         </p>

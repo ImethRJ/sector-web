@@ -64,9 +64,9 @@ const AllTutors = () => {
                         <GraduationCap size={16} className="text-blue-600" />
                         <span className="text-blue-700 font-bold tracking-[0.2em] text-[10px] uppercase">Academic Directory</span>
                     </div>
-                    <h1 id="faculty-title" className="text-4xl md:text-6xl font-black text-[#1a237e] uppercase tracking-tight leading-none mb-4">
+                    <h2 id="faculty-title" className="text-4xl md:text-6xl font-black text-[#1a237e] uppercase tracking-tight leading-none mb-4">
                         Our Entire <span className="text-blue-600">Faculty</span>
-                    </h1>
+                    </h2>
                     <p className="text-slate-500 text-lg font-medium max-w-xl leading-relaxed">
                         A comprehensive directory of the distinguished educators shaping the future at Sector Institute.
                     </p>
