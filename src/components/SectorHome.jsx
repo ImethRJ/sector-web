@@ -86,17 +86,18 @@ const SectorHome = () => {
           </div>
 
           <div className="relative z-10 max-w-4xl pt-20">
-            <h1 className="text-[clamp(2.5rem,9vw,5.5rem)] font-black text-[#1a237e] leading-[1.05] mb-8 tracking-tighter">
-              Empowering Minds <br /> 
+            <h1 className="sr-only">Empowering Minds Redefining Future</h1> {/* Hidden for users, visible to bots */}
+            <div aria-hidden="true" className="text-[clamp(2.5rem,9vw,5.5rem)] font-black text-[#1a237e] leading-[1.05] mb-8 tracking-tighter">
+              Empowering Minds <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-900 to-indigo-600 uppercase italic">Redefining Future</span>
-            </h1>
+            </div>
             <div className="flex flex-col sm:flex-row gap-5">
               {/* FEATURE 1: Smooth scroll to Timetable section */}
               <a href="#Timetable" className="bg-[#1a237e] text-center text-white font-bold py-5 px-10 rounded-2xl shadow-xl uppercase text-xs tracking-widest hover:bg-blue-800 transition-all">
                 View Time Table
               </a>
               {/* FEATURE 2: Trigger Contact Modal */}
-              <button 
+              <button
                 onClick={() => setIsContactOpen(true)}
                 className="bg-white text-[#1a237e] border-2 border-[#1a237e]/10 font-bold py-5 px-10 rounded-2xl uppercase text-xs tracking-widest hover:bg-slate-50 transition-all"
               >
@@ -107,70 +108,70 @@ const SectorHome = () => {
         </section>
       </main>
 
-{/* CONTACT MODAL */}
-{isContactOpen && (
-  <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
-    <div className="absolute inset-0 bg-[#1a237e]/60 backdrop-blur-md" onClick={() => setIsContactOpen(false)}></div>
-    
-    <div className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in duration-300">
-      <button onClick={() => setIsContactOpen(false)} className="absolute top-6 right-6 z-20 bg-white/80 p-2 rounded-full hover:bg-red-50 hover:text-red-500 transition-all">
-        <X size={24} />
-      </button>
+      {/* CONTACT MODAL */}
+      {isContactOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+          <div className="absolute inset-0 bg-[#1a237e]/60 backdrop-blur-md" onClick={() => setIsContactOpen(false)}></div>
 
-      {/* FIXED MAP SECTION */}
-      <div className="w-full md:w-1/2 h-64 md:h-auto bg-slate-100">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3962.648356985392!2d79.90221137450505!3d6.71199999328383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2460662d5d89f%3A0x6a10bc135f375c35!2sSector%20Education!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk" 
-          className="w-full h-full border-none"
-          allowFullScreen="" 
-          loading="lazy" 
-          title="Sector Education Location"
-          referrerPolicy="no-referrer-when-downgrade"
-        ></iframe>
-      </div>
+          <div className="relative w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in zoom-in duration-300">
+            <button onClick={() => setIsContactOpen(false)} className="absolute top-6 right-6 z-20 bg-white/80 p-2 rounded-full hover:bg-red-50 hover:text-red-500 transition-all">
+              <X size={24} />
+            </button>
 
-      {/* Info Section */}
-      <div className="w-full md:w-1/2 p-10 md:p-14 space-y-8">
-        <div>
-          <h2 className="text-3xl font-black text-[#1a237e] uppercase tracking-tighter mb-2">Connect With Us</h2>
-          <p className="text-slate-500 font-medium italic">We're here to help you redefine your future.</p>
-        </div>
-
-        <div className="space-y-6">
-          <div className="flex items-center gap-5 group">
-            <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 transition-colors group-hover:bg-[#1a237e] group-hover:text-white">
-              <MapPin size={24} />
+            {/* FIXED MAP SECTION */}
+            <div className="w-full md:w-1/2 h-64 md:h-auto bg-slate-100">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3962.648356985392!2d79.90221137450505!3d6.71199999328383!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae2460662d5d89f%3A0x6a10bc135f375c35!2sSector%20Education!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk"
+                className="w-full h-full border-none"
+                allowFullScreen=""
+                loading="lazy"
+                title="Sector Education Location"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
             </div>
-            <div>
-              <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Address</p>
-              <p className="text-[#1a237e] font-bold">3/B Grace Peiris Road, Panadura</p>
+
+            {/* Info Section */}
+            <div className="w-full md:w-1/2 p-10 md:p-14 space-y-8">
+              <div>
+                <h2 className="text-3xl font-black text-[#1a237e] uppercase tracking-tighter mb-2">Connect With Us</h2>
+                <p className="text-slate-500 font-medium italic">We're here to help you redefine your future.</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center gap-5 group">
+                  <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 transition-colors group-hover:bg-[#1a237e] group-hover:text-white">
+                    <MapPin size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Address</p>
+                    <p className="text-[#1a237e] font-bold">3/B Grace Peiris Road, Panadura</p>
+                  </div>
+                </div>
+
+                <a href="tel:0382232299" className="flex items-center gap-5 group">
+                  <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
+                    <Phone size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Phone Number</p>
+                    <p className="text-[#1a237e] font-black text-xl text-nowrap">038 223 2299</p>
+                  </div>
+                </a>
+
+                <div className="flex items-center gap-5 group">
+                  <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
+                    <Mail size={24} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Email Address</p>
+                    <p className="text-[#1a237e] font-bold break-all">info@sectoreducation.com</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-
-          <a href="tel:0382232299" className="flex items-center gap-5 group">
-            <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 transition-colors group-hover:bg-emerald-600 group-hover:text-white">
-              <Phone size={24} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Phone Number</p>
-              <p className="text-[#1a237e] font-black text-xl text-nowrap">038 223 2299</p>
-            </div>
-          </a>
-
-          <div className="flex items-center gap-5 group">
-            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
-              <Mail size={24} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest">Email Address</p>
-              <p className="text-[#1a237e] font-bold break-all">info@sectoreducation.com</p>
-            </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 };
