@@ -4,10 +4,10 @@ const express = require("express");
 const path = require("path");
 const axios = require('axios');
 
-// Configuration: Max 10 instances
 setGlobalOptions({ maxInstances: 10 });
 
 const app = express();
+app.use(express.json()); // Essential to parse the body from your React fetch
 
 // 1. Updated Security Policy (CSP)
 app.use((req, res, next) => {
@@ -18,42 +18,32 @@ app.use((req, res, next) => {
     next();
 });
 
-// 2. Serve Static Assets (CSS, JS, Images) from the 'site' folder
-/** * Since firebase.json copies 'dist' to 'functions/site', 
- * we serve static assets from the internal 'site' path.
- */
+// 2. IndexNow Proxy Route - MUST be above app.get("*")
+app.post("/api/indexnow", async (req, res) => {
+    try {
+        const response = await axios.post("https://api.indexnow.org/indexnow", req.body);
+        console.log("IndexNow Success:", response.status);
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        console.error("IndexNow Proxy Error:", error.response?.data || error.message);
+        res.status(error.response?.status || 500).json({ error: "Failed to notify IndexNow" });
+    }
+});
+
+// 3. Serve Static Assets
 app.use(express.static(path.join(__dirname, 'site')));
 
-// 3. Prerender.io Middleware
-app.use(require('prerender-node')
-    .set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG') 
-);
+// 4. Prerender.io Middleware
+app.use(require('prerender-node').set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG'));
 
-// 4. Serve the Static React App (The entry point)
+// 5. Serve the Static React App (Wildcard MUST be last)
 app.get("*", (req, res) => {
-    /**
-     * PATH RESOLUTION:
-     * We look for index.html inside the 'site' folder created during predeploy.
-     */
     const indexPath = path.join(__dirname, 'site', 'index.html');
-    
     res.sendFile(indexPath, (err) => {
         if (err) {
-            console.error("Critical Deployment Error: index.html not found at", indexPath);
-            res.status(404).send("Site files not found. Please check deployment.");
+            res.status(404).send("Site files not found.");
         }
     });
 });
 
-app.post("/api/indexnow", async (req, res) => {
-    try {
-        const response = await axios.post("https://api.indexnow.org/indexnow", req.body);
-        res.status(response.status).json(response.data);
-    } catch (error) {
-        console.error("IndexNow Proxy Error:", error.message);
-        res.status(500).json({ error: "Failed to notify IndexNow" });
-    }
-});
-
-// 5. Export the Function as 'ssr'
 exports.ssr = onRequest(app);

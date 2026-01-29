@@ -9,8 +9,8 @@ import TimetablePage from './components/TimetablePage';
 import NoticesPage from './components/NoticesPage';
 import AdminPage from './components/AdminPage';
 import AllTutors from './components/AllTutors';
-import { submitToIndexNow } from './utils/indexNow'; //
-//
+import { submitToIndexNow } from './utils/indexNow';
+
 ReactGA.initialize("G-ETQXPG2C08");
 
 const LandingPage = () => (
@@ -27,19 +27,20 @@ const LandingPage = () => (
 function App() {
   const location = useLocation();
 
+  // EFFECT 1: Google Analytics (Triggers on every URL change)
   useEffect(() => {
-    // 1. Send Google Analytics Pageview
     ReactGA.send({
       hitType: "pageview",
       page: location.pathname + location.search
     });
+  }, [location]);
 
-    // 2. Trigger IndexNow for Bing/Yandex
-    // We only run this on production to prevent invalid submissions from localhost
+  // EFFECT 2: IndexNow (Triggers ONLY once per session)
+  useEffect(() => {
     if (window.location.hostname !== "localhost") {
       submitToIndexNow();
     }
-  }, [location]);
+  }, []); // Empty array ensures this never causes a routing loop
 
   return (
     <Routes>

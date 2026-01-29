@@ -1,20 +1,28 @@
 export const submitToIndexNow = async () => {
+  const KEY = "6d60cb2cf77640de8f37ef5846678754";
+  const HOST = "sector-institute.web.app";
+  
   const payload = {
-    host: "sector-institute.web.app",
-    key: "6d60cb2cf77640de8f37ef5846678754",
-    keyLocation: "https://sector-institute.web.app/6d60cb2cf77640de8f37ef5846678754.txt",
-    urlList: ["https://sector-institute.web.app/"]
+    host: HOST,
+    key: KEY,
+    keyLocation: `https://${HOST}/${KEY}.txt`,
+    urlList: [
+      `https://${HOST}/`,
+      `https://${HOST}/all-tutors`
+    ]
   };
 
   try {
-    // Call your OWN firebase function instead of api.indexnow.org
-    await fetch('/api/indexnow', { 
+    const response = await fetch('/api/indexnow', { 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    console.log("✅ Success via Proxy!");
+    
+    if (response.ok) {
+      console.log("✅ Sector SEO: Search engines notified via proxy.");
+    }
   } catch (err) {
-    console.error("❌ Proxy failed", err);
+    console.error("❌ Sector SEO: Proxy communication failed", err);
   }
 };
