@@ -1,16 +1,16 @@
-import { useEffect } from 'react'; // Import useEffect
-import { Routes, Route, useLocation } from 'react-router-dom'; // Import useLocation
-import ReactGA from "react-ga4"; // Import React GA4
-import SectorHome from './components/SectorHome'
-import About from './components/About'
-import Footer from './components/Footer'
-import TeachersHome from './components/TeachersHome'
-import TimetablePage from './components/TimetablePage'
-import NoticesPage from './components/NoticesPage'
-import AdminPage from './components/AdminPage'
-import AllTutors from './components/AllTutors'
+import { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import ReactGA from "react-ga4";
+import SectorHome from './components/SectorHome';
+import About from './components/About';
+import Footer from './components/Footer';
+import TeachersHome from './components/TeachersHome';
+import TimetablePage from './components/TimetablePage';
+import NoticesPage from './components/NoticesPage';
+import AdminPage from './components/AdminPage';
+import AllTutors from './components/AllTutors';
+import { submitToIndexNow } from './utils/indexNow'; //
 
-// Initialize with your Measurement ID from the screenshot
 ReactGA.initialize("G-ETQXPG2C08");
 
 const LandingPage = () => (
@@ -27,12 +27,18 @@ const LandingPage = () => (
 function App() {
   const location = useLocation();
 
-  // This effect runs every time the route (URL) changes
   useEffect(() => {
+    // 1. Send Google Analytics Pageview
     ReactGA.send({
       hitType: "pageview",
       page: location.pathname + location.search
     });
+
+    // 2. Trigger IndexNow for Bing/Yandex
+    // We only run this on production to prevent invalid submissions from localhost
+    if (window.location.hostname !== "localhost") {
+      submitToIndexNow();
+    }
   }, [location]);
 
   return (
