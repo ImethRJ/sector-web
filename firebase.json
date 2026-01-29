@@ -8,7 +8,7 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "!/@(sitemap.xml|robots.txt|SectorLogo.jpg|timetable.pdf|assets/**)",
         "function": "ssr"
       }
     ]
