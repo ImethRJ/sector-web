@@ -10,7 +10,7 @@ import NoticesPage from './components/NoticesPage';
 import AdminPage from './components/AdminPage';
 import AllTutors from './components/AllTutors';
 import { submitToIndexNow } from './utils/indexNow'; //
-
+//
 ReactGA.initialize("G-ETQXPG2C08");
 
 const LandingPage = () => (
