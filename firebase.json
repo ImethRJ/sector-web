@@ -26,7 +26,8 @@
         "*.local"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" install"
+        "npm --prefix \"$RESOURCE_DIR\" install",
+        "rm -rf functions/site && cp -r dist functions/site"
       ]
     }
   ]
