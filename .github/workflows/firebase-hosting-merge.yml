@@ -11,7 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      # Step 1: Build the React App
       - run: npm ci && npm run build
+
+      # Step 2: Deploy Cloud Functions (The Fixed ssr function)
+      # This step ensures your CSP and index.html path fixes are uploaded
+      - name: Deploy Functions
+        run: npx firebase-tools deploy --only functions --project sector-institute
+        env:
+          # Use the same service account you have for Hosting
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SECTOR_INSTITUTE }}
+
+      # Step 3: Deploy Hosting
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
