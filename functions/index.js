@@ -2,6 +2,7 @@ const { onRequest } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions");
 const express = require("express");
 const path = require("path");
+const axios = require('axios');
 
 // Configuration: Max 10 instances
 setGlobalOptions({ maxInstances: 10 });
@@ -42,6 +43,16 @@ app.get("*", (req, res) => {
             res.status(404).send("Site files not found. Please check deployment.");
         }
     });
+});
+
+app.post("/api/indexnow", async (req, res) => {
+    try {
+        const response = await axios.post("https://api.indexnow.org/indexnow", req.body);
+        res.status(response.status).json(response.data);
+    } catch (error) {
+        console.error("IndexNow Proxy Error:", error.message);
+        res.status(500).json({ error: "Failed to notify IndexNow" });
+    }
 });
 
 // 5. Export the Function as 'ssr'
