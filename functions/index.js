@@ -3,23 +3,31 @@ const { setGlobalOptions } = require("firebase-functions");
 const express = require("express");
 const path = require("path");
 
-// Configuration: Max 10 instances to manage costs per your original setup
+// Configuration: Max 10 instances
 setGlobalOptions({ maxInstances: 10 });
 
 const app = express();
 
-// 1. Prerender.io Middleware Integration
-// Intercepts crawlers (Bing, Google) to serve pre-rendered HTML snapshots
+// 1. Fix Security Policy (CSP)
+// This allows your fonts (Poppins) and internal styles to load
+app.use((req, res, next) => {
+    res.setHeader(
+        "Content-Security-Policy",
+        "default-src 'self'; font-src 'self' https://sector-institute.web.app; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:;"
+    );
+    next();
+});
+
+// 2. Prerender.io Middleware
 app.use(require('prerender-node')
     .set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG') 
 );
 
-// 2. Serve the Static React App
-// This serves your actual React app to normal students and visitors
+// 3. Serve the Static React App
 app.get("*", (req, res) => {
-    // CORRECTED: Pointing to '../dist/index.html' to match your build output
+    // Send the built index.html for all routes (fixes the 404 on subpages)
     res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
-// 3. Export the Function as 'ssr'
+// 4. Export the Function
 exports.ssr = onRequest(app);
