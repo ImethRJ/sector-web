@@ -17,11 +17,11 @@ app.use((req, res, next) => {
     next();
 });
 
-// 2. Serve Static Assets (CSS, JS, Images)
-/** * This is critical. Since you moved 'dist' inside 'functions', 
- * you must tell Express to serve the static files from this new path.
+// 2. Serve Static Assets (CSS, JS, Images) from the 'site' folder
+/** * Since firebase.json copies 'dist' to 'functions/site', 
+ * we serve static assets from the internal 'site' path.
  */
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'site')));
 
 // 3. Prerender.io Middleware
 app.use(require('prerender-node')
@@ -31,11 +31,10 @@ app.use(require('prerender-node')
 // 4. Serve the Static React App (The entry point)
 app.get("*", (req, res) => {
     /**
-     * CORRECTED PATH: 
-     * Now that 'dist' is INSIDE your functions folder, 
-     * we remove the '../' and point to './dist/index.html'.
+     * PATH RESOLUTION:
+     * We look for index.html inside the 'site' folder created during predeploy.
      */
-    const indexPath = path.join(__dirname, 'dist', 'index.html');
+    const indexPath = path.join(__dirname, 'site', 'index.html');
     
     res.sendFile(indexPath, (err) => {
         if (err) {
