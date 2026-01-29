@@ -7,9 +7,9 @@ const axios = require('axios');
 setGlobalOptions({ maxInstances: 10 });
 
 const app = express();
-app.use(express.json()); // Essential to parse the body from your React fetch
+app.use(express.json());
 
-// 1. Updated Security Policy (CSP)
+// 1. Security Policy
 app.use((req, res, next) => {
     res.setHeader(
         "Content-Security-Policy",
@@ -18,11 +18,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// 2. IndexNow Proxy Route - MUST be above app.get("*")
+// 2. IndexNow Proxy Route (Crucial: Must be before static/wildcard routes)
 app.post("/api/indexnow", async (req, res) => {
     try {
         const response = await axios.post("https://api.indexnow.org/indexnow", req.body);
-        console.log("IndexNow Success:", response.status);
         res.status(response.status).json(response.data);
     } catch (error) {
         console.error("IndexNow Proxy Error:", error.response?.data || error.message);
@@ -30,17 +29,18 @@ app.post("/api/indexnow", async (req, res) => {
     }
 });
 
-// 3. Serve Static Assets
+// 3. Serve Static Assets from 'site' folder (Created during predeploy)
 app.use(express.static(path.join(__dirname, 'site')));
 
 // 4. Prerender.io Middleware
 app.use(require('prerender-node').set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG'));
 
-// 5. Serve the Static React App (Wildcard MUST be last)
+// 5. Wildcard Route: Serve index.html for all other paths
 app.get("*", (req, res) => {
     const indexPath = path.join(__dirname, 'site', 'index.html');
     res.sendFile(indexPath, (err) => {
         if (err) {
+            console.error("Index.html not found at", indexPath);
             res.status(404).send("Site files not found.");
         }
     });

@@ -27,7 +27,7 @@ const LandingPage = () => (
 function App() {
   const location = useLocation();
 
-  // EFFECT 1: Google Analytics (Triggers on every URL change)
+  // Analytics - Runs on every route change
   useEffect(() => {
     ReactGA.send({
       hitType: "pageview",
@@ -35,22 +35,17 @@ function App() {
     });
   }, [location]);
 
-  // EFFECT 2: IndexNow (Triggers ONLY once per session)
+  // IndexNow - Runs ONLY once when the app loads
   useEffect(() => {
     if (window.location.hostname !== "localhost") {
       submitToIndexNow();
     }
-  }, []); // Empty array ensures this never causes a routing loop
+  }, []);
 
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      <Route path="/all-tutors" element={
-        <>
-          <AllTutors />
-          <Footer />
-        </>
-      } />
+      <Route path="/all-tutors" element={<><AllTutors /><Footer /></>} />
       <Route path="/sector19365" element={<AdminPage />} />
     </Routes>
   );

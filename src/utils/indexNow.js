@@ -8,7 +8,7 @@ export const submitToIndexNow = async () => {
     keyLocation: `https://sector-institute.web.app/6d60cb2cf77640de8f37ef5846678754.txt`,
     urlList: [
       `https://sector-institute.web.app/`,
-      `https://sector-institute.web.app/all-tutors`
+      `https://sector-institute.web.app/all-tutors`,
       `https://sector-institute.web.app/sector19365`
     ]
   };
@@ -21,9 +21,9 @@ export const submitToIndexNow = async () => {
     });
     
     if (response.ok) {
-      console.log("✅ Sector SEO: Search engines notified via proxy.");
+      console.log("✅ IndexNow: Bing notified via SSR Proxy.");
     }
   } catch (err) {
-    console.error("❌ Sector SEO: Proxy communication failed", err);
+    console.error("❌ IndexNow: Proxy error", err);
   }
 };
