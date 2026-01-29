@@ -5,10 +5,11 @@ export const submitToIndexNow = async () => {
   const payload = {
     host: HOST,
     key: KEY,
-    keyLocation: `https://${HOST}/${KEY}.txt`,
+    keyLocation: `https://sector-institute.web.app/6d60cb2cf77640de8f37ef5846678754.txt`,
     urlList: [
-      `https://${HOST}/`,
-      `https://${HOST}/all-tutors`
+      `https://sector-institute.web.app/`,
+      `https://sector-institute.web.app/all-tutors`
+      `https://sector-institute.web.app/sector19365`
     ]
   };
 
