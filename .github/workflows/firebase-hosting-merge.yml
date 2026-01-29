@@ -6,7 +6,7 @@ jobs:
 
       - name: Install dependencies and build
         run: npm ci && npm run build
-
+#
       # 1. Authenticate with Google Cloud
       # This "logs in" the runner so the following firebase command works
       - name: Authenticate to Google Cloud
@@ -25,4 +25,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SECTOR_INSTITUTE }}
           channelId: live
-          projectId: sector-institute
+          projectId: sector-institute 
