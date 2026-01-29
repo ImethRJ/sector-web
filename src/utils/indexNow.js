@@ -1,8 +1,8 @@
 export const submitToIndexNow = async () => {
   const payload = {
     host: "sector-institute.web.app",
-    key: "c67b431d03a8413aba9a76ab20dd9531",
-    keyLocation: "https://sector-institute.web.app/c67b431d03a8413aba9a76ab20dd9531.txt",
+    key: "6d60cb2cf77640de8f37ef5846678754",
+    keyLocation: "https://sector-institute.web.app/6d60cb2cf77640de8f37ef5846678754.txt",
     urlList: ["https://sector-institute.web.app/"]
   };
 
