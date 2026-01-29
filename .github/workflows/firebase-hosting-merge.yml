@@ -12,17 +12,23 @@ jobs:
       # Build the React app (creates the 'dist' folder)
       - run: npm ci && npm run build
 
-      # Step 1: Login to Google Cloud so the CLI can deploy functions
+      # 1. Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_SECTOR_INSTITUTE }}
 
-      # Step 2: Deploy only the SSR function
+      # 2. NEW STEP: Install Function Dependencies
+      # This fixes the "Couldn't find firebase-functions package" error
+      - name: Install Functions Dependencies
+        run: npm ci
+        working-directory: functions 
+
+      # 3. Deploy Functions
       - name: Deploy Functions
         run: npx firebase-tools deploy --only functions --project sector-institute
 
-      # Step 3: Deploy the Hosting files
+      # Step 4: Deploy the Hosting files
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
