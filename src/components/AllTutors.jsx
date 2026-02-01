@@ -11,7 +11,8 @@ const AllTutors = () => {
     useEffect(() => {
         const fetchAllTeachers = async () => {
             try {
-                const q = query(collection(db, "teachers"), orderBy("name", "asc"));
+                // UPDATE: Changed orderBy from "name" to "orderIndex"
+                const q = query(collection(db, "teachers"), orderBy("orderIndex", "asc"));
                 const querySnapshot = await getDocs(q);
 
                 const teachersData = querySnapshot.docs.map(doc => ({
@@ -30,7 +31,6 @@ const AllTutors = () => {
         fetchAllTeachers();
     }, []);
 
-    // Optimized Loading State: Skeleton UI reduces perceived loading time
     if (loading) return (
         <div className="py-24 bg-white px-6 min-h-screen max-w-[1400px] mx-auto">
             <div className="h-8 w-32 bg-slate-100 animate-pulse rounded-lg mb-12"></div>
@@ -46,8 +46,6 @@ const AllTutors = () => {
     return (
         <main className="py-24 bg-[#fcfdfe] px-6 min-h-screen">
             <section className="max-w-[1400px] mx-auto" aria-labelledby="faculty-title">
-
-                {/* Navigation UX: Improved Back Button */}
                 <nav className="mb-12" aria-label="Back navigation">
                     <Link
                         to="/"
@@ -58,7 +56,6 @@ const AllTutors = () => {
                     </Link>
                 </nav>
 
-                {/* SEO: Semantic Header with Metadata */}
                 <header className="mb-20">
                     <div className="inline-flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-full mb-4 border border-blue-100">
                         <GraduationCap size={16} className="text-blue-600" />
@@ -72,14 +69,12 @@ const AllTutors = () => {
                     </p>
                 </header>
 
-                {/* Optimized Grid Layout */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
                     {allTeachers.map((tutor) => (
                         <article 
                             key={tutor.id} 
                             className="group bg-white p-8 rounded-[3rem] border border-slate-50 text-center shadow-[0_10px_40px_rgba(0,0,0,0.02)] hover:shadow-[0_25px_60px_rgba(26,35,126,0.1)] transition-all duration-500 hover:-translate-y-2"
                         >
-                            {/* Image Optimization: Native lazy loading and decoding */}
                             <div className="relative w-36 h-36 mx-auto mb-8 rounded-full overflow-hidden border-8 border-slate-50 shadow-inner bg-indigo-50 flex items-center justify-center transition-colors group-hover:border-blue-50">
                                 {tutor.image ? (
                                     <img 
@@ -98,6 +93,8 @@ const AllTutors = () => {
                             
                             <h3 className="text-2xl font-black text-[#1a237e] mb-2 tracking-tight">
                                 {tutor.name}
+                                {/* Optional: Add a star for featured teachers in the full list */}
+                                {tutor.isFeatured && <span className="ml-2 text-yellow-400 text-lg">★</span>}
                             </h3>
                             <div className="inline-block px-4 py-1 bg-blue-50 text-blue-600 font-bold text-[10px] uppercase tracking-[0.15em] rounded-full border border-blue-100">
                                 {tutor.subject}
@@ -106,7 +103,6 @@ const AllTutors = () => {
                     ))}
                 </div>
 
-                {/* SEO: Footer meta text */}
                 <footer className="mt-24 pt-12 border-t border-slate-100 text-center">
                     <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
                         All faculty members are verified academic professionals at Sector Education.

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { db } from '../firebase';
-import { collection, getDocs, query, where, limit } from 'firebase/firestore';
+import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 
 const TeachersHome = () => {
     const [featuredTeachers, setFeaturedTeachers] = useState([]);
@@ -10,10 +10,11 @@ const TeachersHome = () => {
     useEffect(() => {
         const fetchTeachers = async () => {
             try {
+                // UPDATE: Added orderBy("orderIndex", "asc") to respect admin order
                 const q = query(
                     collection(db, "teachers"),
                     where("isFeatured", "==", true),
-                    limit(6)
+                    orderBy("orderIndex", "asc")
                 );
 
                 const querySnapshot = await getDocs(q);
@@ -69,19 +70,15 @@ const TeachersHome = () => {
                             >
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-blue-50 rounded-full scale-0 group-hover:scale-110 transition-transform duration-500 -z-0 opacity-50"></div>
 
-                                {/* Image Container: Added background color to act as a placeholder */}
                                 <div className="relative z-10 w-36 h-36 mx-auto mb-8 rounded-full overflow-hidden border-8 border-slate-50 shadow-inner group-hover:border-blue-50 transition-colors duration-500 flex items-center justify-center bg-indigo-50">
                                     {tutor.image ? (
                                         <img 
                                             src={tutor.image} 
                                             alt={`Portrait of ${tutor.name}`} 
                                             className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500" 
-                                            // 1. NATIVE LAZY LOADING
                                             loading="lazy"
-                                            // 2. EXPLICIT DIMENSIONS (Helps Browser Rendering)
                                             width="144"
                                             height="144"
-                                            // 3. LOW PRIORITY IF BELOW THE FOLD
                                             decoding="async"
                                         />
                                     ) : (
@@ -96,12 +93,6 @@ const TeachersHome = () => {
                                     <div className="inline-block px-4 py-1.5 bg-blue-50 text-blue-600 font-bold text-[10px] uppercase tracking-[0.15em] rounded-full border border-blue-100">
                                         {tutor.subject || "Academic Mentor"}
                                     </div>
-                                </div>
-
-                                <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                    <svg className="w-6 h-6 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                    </svg>
                                 </div>
                             </article>
                         ))}
