@@ -93,8 +93,6 @@ const AllTutors = () => {
                             
                             <h3 className="text-2xl font-black text-[#1a237e] mb-2 tracking-tight">
                                 {tutor.name}
-                                {/* Optional: Add a star for featured teachers in the full list */}
-                                {tutor.isFeatured && <span className="ml-2 text-yellow-400 text-lg">★</span>}
                             </h3>
                             <div className="inline-block px-4 py-1 bg-blue-50 text-blue-600 font-bold text-[10px] uppercase tracking-[0.15em] rounded-full border border-blue-100">
                                 {tutor.subject}
