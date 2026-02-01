@@ -84,12 +84,26 @@ const NoticeForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
 
 const AdminPage = () => {
     const {
-        teachers, addTeacher, removeTeacher, updateTeacher,
+        teachers, addTeacher, removeTeacher, updateTeacher, updateTeachersOrder,
         notices, addNotice, removeNotice, updateNotice
     } = useData();
 
     const [activeTab, setActiveTab] = useState('teachers');
     const [editingItem, setEditingItem] = useState(null);
+
+    // --- REORDER LOGIC ---
+    const handleMoveTeacher = (index, direction) => {
+        const newItems = [...teachers];
+        const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+        if (targetIndex < 0 || targetIndex >= newItems.length) return;
+
+        // Swap positions
+        [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
+        
+        // Save to DataContext (and eventually Firebase)
+        updateTeachersOrder(newItems);
+    };
 
     const confirmDelete = (id, type, callback) => {
         if (window.confirm(`Are you sure you want to remove this ${type}?`)) {
@@ -104,7 +118,7 @@ const AdminPage = () => {
             <div className="max-w-6xl mx-auto">
                 <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
                     <div>
-                        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Admin Dashboard</h1>
+                        <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Admin Dashboard</h2>
                         <p className="text-slate-500 mt-1">Manage institute content and staff.</p>
                     </div>
                     <Link to="/" className="px-5 py-2 bg-white text-slate-600 font-semibold rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
@@ -139,14 +153,20 @@ const AdminPage = () => {
                                 </div>
                             </div>
                             <div className="lg:col-span-2 space-y-3">
-                                {teachers.map(t => (
+                                <div className="flex justify-between items-center mb-2 px-2">
+                                    <p className="text-xs font-bold text-slate-400 uppercase">Current Staff Order</p>
+                                    <p className="text-[10px] text-slate-400 italic text-right leading-tight">Featured staff will appear first on home <br/> followed by others in this order.</p>
+                                </div>
+                                {teachers.map((t, index) => (
                                     <ListItem
                                         key={t.id}
                                         title={t.name}
-                                        subtitle={t.subject}
+                                        subtitle={t.isFeatured ? `⭐ Featured - ${t.subject}` : t.subject}
                                         image={t.image}
                                         onEdit={() => setEditingItem(t)}
                                         onDelete={() => confirmDelete(t.id, 'teacher', removeTeacher)}
+                                        onMoveUp={index > 0 ? () => handleMoveTeacher(index, 'up') : null}
+                                        onMoveDown={index < teachers.length - 1 ? () => handleMoveTeacher(index, 'down') : null}
                                     />
                                 ))}
                             </div>
@@ -187,9 +207,29 @@ const AdminPage = () => {
 
 // --- SHARED UI COMPONENTS ---
 
-const ListItem = ({ title, subtitle, image, onEdit, onDelete }) => (
+const ListItem = ({ title, subtitle, image, onEdit, onDelete, onMoveUp, onMoveDown }) => (
     <div className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
         <div className="flex items-center gap-4">
+            {/* Reorder Arrows (Only if handlers are passed) */}
+            {(onMoveUp || onMoveDown) && (
+                <div className="flex flex-col items-center bg-slate-50 rounded-lg p-1 border border-slate-100">
+                    <button 
+                        disabled={!onMoveUp}
+                        onClick={onMoveUp}
+                        className={`p-1 hover:text-indigo-600 transition-colors ${!onMoveUp ? 'text-slate-200 cursor-not-allowed' : 'text-slate-400'}`}
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7"></path></svg>
+                    </button>
+                    <button 
+                        disabled={!onMoveDown}
+                        onClick={onMoveDown}
+                        className={`p-1 hover:text-indigo-600 transition-colors ${!onMoveDown ? 'text-slate-200 cursor-not-allowed' : 'text-slate-400'}`}
+                    >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                </div>
+            )}
+
             {image !== undefined && (
                 <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center overflow-hidden border border-slate-100">
                     {image ? <img src={image} alt="" className="w-full h-full object-cover" /> : <span className="text-indigo-600 font-bold">{title ? title[0] : '?'}</span>}
