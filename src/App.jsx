@@ -1,15 +1,18 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import ReactGA from "react-ga4";
-import SectorHome from './components/SectorHome';
-import About from './components/About';
 import Footer from './components/Footer';
-import TeachersHome from './components/TeachersHome';
-import TimetablePage from './components/TimetablePage';
-import NoticesPage from './components/NoticesPage';
-import AdminPage from './components/AdminPage';
-import AllTutors from './components/AllTutors';
+import LoadingSpinner from './components/LoadingSpinner';
 import { submitToIndexNow } from './utils/indexNow';
+
+// Lazy load components
+const SectorHome = lazy(() => import('./components/SectorHome'));
+const About = lazy(() => import('./components/About'));
+const TeachersHome = lazy(() => import('./components/TeachersHome'));
+const TimetablePage = lazy(() => import('./components/TimetablePage'));
+const NoticesPage = lazy(() => import('./components/NoticesPage'));
+const AdminPage = lazy(() => import('./components/AdminPage'));
+const AllTutors = lazy(() => import('./components/AllTutors'));
 
 ReactGA.initialize("G-ETQXPG2C08");
 
@@ -43,11 +46,13 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/all-tutors" element={<><AllTutors /><Footer /></>} />
-      <Route path="/sector19365" element={<AdminPage />} />
-    </Routes>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/all-tutors" element={<><AllTutors /><Footer /></>} />
+        <Route path="/sector19365" element={<AdminPage />} />
+      </Routes>
+    </Suspense>
   );
 }
 

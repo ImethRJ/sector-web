@@ -3,6 +3,7 @@ import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
+import imageCompression from 'browser-image-compression';
 
 // --- FORM COMPONENTS ---
 
@@ -100,7 +101,7 @@ const AdminPage = () => {
 
         // Swap positions
         [newItems[index], newItems[targetIndex]] = [newItems[targetIndex], newItems[index]];
-        
+
         // Save to DataContext (and eventually Firebase)
         updateTeachersOrder(newItems);
     };
@@ -155,7 +156,7 @@ const AdminPage = () => {
                             <div className="lg:col-span-2 space-y-3">
                                 <div className="flex justify-between items-center mb-2 px-2">
                                     <p className="text-xs font-bold text-slate-400 uppercase">Current Staff Order</p>
-                                    <p className="text-[10px] text-slate-400 italic text-right leading-tight">Featured staff will appear first on home <br/> followed by others in this order.</p>
+                                    <p className="text-[10px] text-slate-400 italic text-right leading-tight">Featured staff will appear first on home <br /> followed by others in this order.</p>
                                 </div>
                                 {teachers.map((t, index) => (
                                     <ListItem
@@ -213,14 +214,14 @@ const ListItem = ({ title, subtitle, image, onEdit, onDelete, onMoveUp, onMoveDo
             {/* Reorder Arrows (Only if handlers are passed) */}
             {(onMoveUp || onMoveDown) && (
                 <div className="flex flex-col items-center bg-slate-50 rounded-lg p-1 border border-slate-100">
-                    <button 
+                    <button
                         disabled={!onMoveUp}
                         onClick={onMoveUp}
                         className={`p-1 hover:text-indigo-600 transition-colors ${!onMoveUp ? 'text-slate-200 cursor-not-allowed' : 'text-slate-400'}`}
                     >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 15l7-7 7 7"></path></svg>
                     </button>
-                    <button 
+                    <button
                         disabled={!onMoveDown}
                         onClick={onMoveDown}
                         className={`p-1 hover:text-indigo-600 transition-colors ${!onMoveDown ? 'text-slate-200 cursor-not-allowed' : 'text-slate-400'}`}
@@ -255,22 +256,29 @@ const ImageUploadGroup = ({ value, onChange, inputClass }) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        if (file.size > 2 * 1024 * 1024) {
-            alert("File is too large. Please choose an image under 2MB.");
-            return;
-        }
+        // Compress Image Logic
+        const options = {
+            maxSizeMB: 0.5, // Verify this limit with user if needed
+            maxWidthOrHeight: 1200,
+            useWebWorker: true,
+        };
 
         try {
             setUploading(true);
-            const storageRef = ref(storage, `teachers/${Date.now()}_${file.name}`);
-            const snapshot = await uploadBytes(storageRef, file);
+            const compressedFile = await imageCompression(file, options);
+
+            // Generate a unique name for the file
+            const fileName = `teachers/${Date.now()}_${compressedFile.name}`;
+            const storageRef = ref(storage, fileName);
+
+            const snapshot = await uploadBytes(storageRef, compressedFile);
             const downloadURL = await getDownloadURL(snapshot.ref);
             onChange(downloadURL);
             setUploading(false);
         } catch (error) {
-            console.error("Upload error:", error);
+            console.error("Upload/Compression error:", error);
             setUploading(false);
-            alert("Upload failed. Check your Firebase Storage rules.");
+            alert("Upload failed. Try a different image.");
         }
     };
 
