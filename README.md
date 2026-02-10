@@ -1,16 +1,68 @@
-# React + Vite
+# Sector Education Institute Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, high-performance web application for Sector Education Institute, Panadura. This platform serves as the digital hub for students and parents to access information about tutors, class timetables, and institute notices.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[https://sector-institute.web.app](https://sector-institute.web.app)
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- **Dynamic Content Management**: Admin dashboard to manage teachers, notices, and timetables in real-time.
+- **Responsive Design**: Fully responsive UI built with Tailwind CSS, ensuring a seamless experience across all devices.
+- **Performance Optimized**:
+  - Code splitting and lazy loading for faster initial page loads.
+  - Client-side image compression for optimized storage and bandwidth usage.
+- **SEO Friendly**: Server-Side Rendering (SSR) via Firebase Functions for better search engine visibility.
+- **Real-time Updates**: Powered by Firebase Firestore for instant data synchronization.
 
-## Expanding the ESLint configuration
+## 🛠️ Technologies Used
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Frontend
+- **[React](https://reactjs.org/)**: UI Library
+- **[Vite](https://vitejs.dev/)**: Build tool and development server
+- **[Tailwind CSS](https://tailwindcss.com/)**: Utility-first CSS framework
+- **[React Router](https://reactrouter.com/)**: Client-side routing
+- **[Lucide React](https://lucide.dev/)**: Icon library
+
+### Backend & Services
+- **[Firebase](https://firebase.google.com/)**:
+  - **Hosting**: Fast and secure web hosting
+  - **Firestore**: NoSQL cloud database
+  - **Storage**: Cloud storage for images
+  - **Functions**: Serverless backend logic (SSR, IndexNow)
+
+### Key Libraries
+- `browser-image-compression`: Efficient image optimization before upload
+- `react-ga4`: Google Analytics 4 integration
+- `react-helmet-async`: Document head management
+
+## 📦 Local Development
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/ImethRJ/sector-web.git
+   cd sector-web
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   Create a `.env` file in the root directory and add your Firebase configuration.
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## 📝 License
+
+This project is proprietary software of Sector Education Institute.
