@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -8,12 +8,7 @@ import imageCompression from 'browser-image-compression';
 // --- FORM COMPONENTS ---
 
 const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState({ name: '', subject: '', image: '', isFeatured: false });
-
-    useEffect(() => {
-        if (editingItem) setForm(editingItem);
-        else setForm({ name: '', subject: '', image: '', isFeatured: false });
-    }, [editingItem]);
+    const [form, setForm] = useState(editingItem || { name: '', subject: '', image: '', isFeatured: false });
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -54,12 +49,7 @@ const TeacherForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
 };
 
 const NoticeForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
-    const [form, setForm] = useState({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
-
-    useEffect(() => {
-        if (editingItem) setForm(editingItem);
-        else setForm({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
-    }, [editingItem]);
+    const [form, setForm] = useState(editingItem || { title: '', content: '', date: new Date().toISOString().split('T')[0] });
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -146,6 +136,7 @@ const AdminPage = () => {
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-8">
                                     <h3 className="font-bold text-xl mb-6 text-slate-800">{editingItem ? 'Update Tutor' : 'Add New Tutor'}</h3>
                                     <TeacherForm
+                                        key={editingItem ? editingItem.id : 'new-teacher'}
                                         onSubmit={editingItem ? updateTeacher : addTeacher}
                                         editingItem={editingItem}
                                         setEditingItem={setEditingItem}
@@ -180,6 +171,7 @@ const AdminPage = () => {
                                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-8">
                                     <h3 className="font-bold text-xl mb-6 text-slate-800">{editingItem ? 'Update Notice' : 'Post Notice'}</h3>
                                     <NoticeForm
+                                        key={editingItem ? editingItem.id : 'new-notice'}
                                         onSubmit={editingItem ? updateNotice : addNotice}
                                         editingItem={editingItem}
                                         setEditingItem={setEditingItem}

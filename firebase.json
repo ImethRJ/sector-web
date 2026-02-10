@@ -27,7 +27,7 @@
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" install",
-        "rm -rf functions/site && cp -r dist functions/site"
+        "node scripts/deploy-prep.js"
       ]
     }
   ]

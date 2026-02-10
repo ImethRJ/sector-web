@@ -1,0 +1,35 @@
+﻿
+C:\Users\Sonal\SectorWEB\sector-web\src\components\AdminPage.jsx
+  14:26  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  12 |
+  13 |     useEffect(() => {
+> 14 |         if (editingItem) setForm(editingItem);
+     |                          ^^^^^^^ Avoid calling setState() directly within an effect
+  15 |         else setForm({ name: '', subject: '', image: '', isFeatured: false });
+  16 |     }, [editingItem]);
+  17 |                   react-hooks/set-state-in-effect
+  60:26  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+  58 |
+  59 |     useEffect(() => {
+> 60 |         if (editingItem) setForm(editingItem);
+     |                          ^^^^^^^ Avoid calling setState() directly within an effect
+  61 |         else setForm({ title: '', content: '', date: new Date().toISOString().split('T')[0] });
+  62 |     }, [editingItem]);
+  63 |  react-hooks/set-state-in-effect
+
+Γ£û 2 problems (2 errors, 0 warnings)
+

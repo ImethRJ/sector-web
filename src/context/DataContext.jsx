@@ -50,8 +50,8 @@ export const DataProvider = ({ children }) => {
     const addTeacher = async (teacherData) => {
         try {
             // Logic: New teachers are added to the end of the list
-            const currentMaxOrder = teachers.length > 0 
-                ? Math.max(...teachers.map(t => t.orderIndex || 0)) 
+            const currentMaxOrder = teachers.length > 0
+                ? Math.max(...teachers.map(t => t.orderIndex || 0))
                 : -1;
 
             await addDoc(collection(db, "teachers"), {
@@ -71,7 +71,7 @@ export const DataProvider = ({ children }) => {
     const updateTeachersOrder = async (newOrderArray) => {
         try {
             const batch = writeBatch(db);
-            
+
             // We loop through the new array and update each teacher's orderIndex
             newOrderArray.forEach((teacher, index) => {
                 const docRef = doc(db, "teachers", teacher.id);
@@ -106,12 +106,12 @@ export const DataProvider = ({ children }) => {
 
     // --- Notice & Timetable Actions (Stay the same) ---
     const addNotice = async (notice) => {
-        try { await addDoc(collection(db, "notices"), { ...notice, createdAt: new Date() }); } 
+        try { await addDoc(collection(db, "notices"), { ...notice, createdAt: new Date() }); }
         catch (err) { console.error("Error adding notice:", err); }
     };
 
     const removeNotice = async (id) => {
-        try { await deleteDoc(doc(db, "notices", id)); } 
+        try { await deleteDoc(doc(db, "notices", id)); }
         catch (err) { console.error("Error removing notice:", err); }
     };
 
@@ -123,12 +123,12 @@ export const DataProvider = ({ children }) => {
     };
 
     const addTimetableItem = async (item) => {
-        try { await addDoc(collection(db, "timetable"), item); } 
+        try { await addDoc(collection(db, "timetable"), item); }
         catch (err) { console.error("Error adding timetable item:", err); }
     };
 
     const removeTimetableItem = async (id) => {
-        try { await deleteDoc(doc(db, "timetable", id)); } 
+        try { await deleteDoc(doc(db, "timetable", id)); }
         catch (err) { console.error("Error removing timetable item:", err); }
     };
 
@@ -151,4 +151,5 @@ export const DataProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useData = () => useContext(DataContext);
