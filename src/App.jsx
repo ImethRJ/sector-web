@@ -32,6 +32,11 @@ function App() {
 
   // Analytics - Runs on every route change
   useEffect(() => {
+    // Scroll to top only if there's no hash (prevents breaking section navigation)
+    if (!location.hash) {
+      window.scrollTo(0, 0);
+    }
+
     ReactGA.send({
       hitType: "pageview",
       page: location.pathname + location.search
