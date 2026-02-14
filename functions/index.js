@@ -23,20 +23,33 @@ app.use((req, res, next) => {
 
 // 0.1 SPECIAL ROUTES (Must be first to avoid interference)
 app.get("/robots.txt", (req, res) => {
-    console.log("[Robots] Serving robots.txt via SSR");
-    res.type('text/plain');
-    res.sendFile(path.join(__dirname, 'site', '_robots.txt'), (err) => {
-        if (err) {
-            console.error("[Robots] Error:", err);
-            res.status(404).send(`Robots.txt not found. Error: ${err.message}`);
-        }
-    });
+    const fs = require('fs');
+    const filePath = path.join(__dirname, 'site', '_robots.txt');
+    console.log(`[Robots] Serving manual read from: ${filePath}`);
+
+    try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        res.type('text/plain');
+        res.send(content);
+    } catch (err) {
+        console.error("[Robots] Error reading file:", err);
+        res.status(404).send(`Robots.txt not found on server. Path: ${filePath}`);
+    }
 });
 
 app.get("/sitemap.xml", (req, res) => {
-    console.log("[Sitemap] Serving sitemap.xml via SSR");
-    res.type('application/xml');
-    res.sendFile(path.join(__dirname, 'site', '_sitemap.xml'));
+    const fs = require('fs');
+    const filePath = path.join(__dirname, 'site', '_sitemap.xml');
+    console.log(`[Sitemap] Serving manual read from: ${filePath}`);
+
+    try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        res.type('application/xml');
+        res.send(content);
+    } catch (err) {
+        console.error("[Sitemap] Error reading file:", err);
+        res.status(404).send("Sitemap not found");
+    }
 });
 
 // Debug route (Temporary)
