@@ -6,13 +6,6 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "redirects": [
-      {
-        "source": "**",
-        "destination": "https://sectorinstitute.lk",
-        "type": 301
-      }
-    ],
     "rewrites": [
       {
         "source": "**",
