@@ -47,6 +47,7 @@ app.post("/api/indexnow", async (req, res) => {
 app.use(express.static(path.join(__dirname, 'site')));
 
 // 3.1 Serve renamed files for GSC/SEO (sitemap, robots)
+// 3.1 Serve renamed files for GSC/SEO (sitemap, robots)
 app.get("/sitemap.xml", (req, res) => res.sendFile(path.join(__dirname, 'site', '_sitemap.xml')));
 app.get("/robots.txt", (req, res) => res.sendFile(path.join(__dirname, 'site', '_robots.txt')));
 
@@ -55,7 +56,8 @@ app.use(require('prerender-node').set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG'))
 
 // 5. Wildcard Route: Serve index.html for all other paths
 app.get("*", (req, res) => {
-    const indexPath = path.join(__dirname, 'site', 'index.html');
+    // Serve _index.html because index.html was renamed to avoid Firebase Hosting static serving
+    const indexPath = path.join(__dirname, 'site', '_index.html');
     res.sendFile(indexPath, (err) => {
         if (err) {
             console.error("Index.html not found at", indexPath);
