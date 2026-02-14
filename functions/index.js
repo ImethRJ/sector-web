@@ -10,17 +10,14 @@ const app = express();
 app.use(express.json());
 
 // 0. Domain Redirection (User Request: Fix Redirect Loop)
+// 0. Domain Redirection (Fixed: 301 Redirect for old domains)
 app.use((req, res, next) => {
     const host = req.get('host');
     const xForwardedHost = req.get('x-forwarded-host');
 
-    // Debug log to check what the server sees
-    console.log('Domain Redirect Debug:', { host, xForwardedHost, url: req.url });
-
     const isOldDomain = (h) => h && (h.includes('sector-institute.web.app') || h.includes('sector-institute.firebaseapp.com'));
 
     if (isOldDomain(host) || isOldDomain(xForwardedHost)) {
-        console.log('Redirecting to sectorinstitute.lk');
         return res.redirect(301, `https://sectorinstitute.lk${req.url}`);
     }
     next();
