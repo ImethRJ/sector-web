@@ -21,48 +21,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// 0.1 SPECIAL ROUTES (Must be first to avoid interference)
-app.get("/robots.txt", (req, res) => {
-    const fs = require('fs');
-    const filePath = path.join(__dirname, 'site', '_robots.txt');
-    console.log(`[Robots] Serving manual read from: ${filePath}`);
-
-    try {
-        const content = fs.readFileSync(filePath, 'utf8');
-        res.type('text/plain');
-        res.send(content);
-    } catch (err) {
-        console.error("[Robots] Error reading file:", err);
-        res.status(404).send(`Robots.txt not found on server. Path: ${filePath}`);
-    }
-});
-
-app.get("/sitemap.xml", (req, res) => {
-    const fs = require('fs');
-    const filePath = path.join(__dirname, 'site', '_sitemap.xml');
-    console.log(`[Sitemap] Serving manual read from: ${filePath}`);
-
-    try {
-        const content = fs.readFileSync(filePath, 'utf8');
-        res.type('application/xml');
-        res.send(content);
-    } catch (err) {
-        console.error("[Sitemap] Error reading file:", err);
-        res.status(404).send("Sitemap not found");
-    }
-});
-
-// Debug route (Temporary)
-app.get("/debug-files", (req, res) => {
-    const fs = require('fs');
-    try {
-        const siteFiles = fs.readdirSync(path.join(__dirname, 'site'));
-        res.json({ files: siteFiles, cwd: process.cwd() });
-    } catch (e) {
-        res.status(500).json({ error: e.message });
-    }
-});
-
 // 1. Security Policy
 app.use((req, res, next) => {
     res.setHeader(
