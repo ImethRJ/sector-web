@@ -49,6 +49,10 @@ app.post("/api/indexnow", async (req, res) => {
 // 3. Serve Static Assets from 'site' folder (Created during predeploy)
 app.use(express.static(path.join(__dirname, 'site')));
 
+// 3.1 Serve renamed files for GSC/SEO (sitemap, robots)
+app.get("/sitemap.xml", (req, res) => res.sendFile(path.join(__dirname, 'site', '_sitemap.xml')));
+app.get("/robots.txt", (req, res) => res.sendFile(path.join(__dirname, 'site', '_robots.txt')));
+
 // 4. Prerender.io Middleware
 app.use(require('prerender-node').set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG'));
 
