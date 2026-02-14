@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const SITEMAP_PATH = path.join(__dirname, '../public/sitemap.xml');
 const HOST = 'sectorinstitute.lk';
 const KEY = '220e5c9d7d924fada2478adfd92a9bf2';
-const KEY_LOCATION = `https://${HOST}/${KEY}.txt`;
+const KEY_LOCATION = 'https://sectorinstitute.lk/220e5c9d7d924fada2478adfd92a9bf2.txt';
 
 // Simple XML parser to extract <loc> tags
 function extractUrls(xmlContent) {
