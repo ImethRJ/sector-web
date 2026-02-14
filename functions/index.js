@@ -12,7 +12,7 @@ app.use(express.json());
 // 0. Domain Redirection (User Request: Fix Redirect Loop)
 app.use((req, res, next) => {
     const host = req.get('host');
-    if (host === 'sector-institute.web.app' || host === 'sector-institute.firebaseapp.com') {
+    if (host && (host.includes('sector-institute.web.app') || host.includes('sector-institute.firebaseapp.com'))) {
         return res.redirect(301, `https://sectorinstitute.lk${req.url}`);
     }
     next();
