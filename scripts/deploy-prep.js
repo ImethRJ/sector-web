@@ -47,7 +47,7 @@ deleteFolderRecursive(targetDir);
 // Critical Fix for GSC/Redirects:
 // Rename dist/index.html so Firebase Hosting doesn't serve it statically.
 // This forces the request to fall through to the SSR function, which handles the 301 redirect.
-const filesToRename = ['index.html', 'sitemap.xml', 'robots.txt'];
+const filesToRename = ['index.html'];
 
 filesToRename.forEach(file => {
     const distFile = path.join(distDir, file);
