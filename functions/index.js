@@ -9,18 +9,45 @@ setGlobalOptions({ maxInstances: 10 });
 const app = express();
 app.use(express.json());
 
-// 0. Domain Redirection (User Request: Fix Redirect Loop)
-// 0. Domain Redirection (Fixed: 301 Redirect for old domains)
+// 0. Domain Redirection
 app.use((req, res, next) => {
+    // ... (keep existing redirection logic if needed, or rely on original)
     const host = req.get('host');
     const xForwardedHost = req.get('x-forwarded-host');
-
     const isOldDomain = (h) => h && (h.includes('sector-institute.web.app') || h.includes('sector-institute.firebaseapp.com'));
-
     if (isOldDomain(host) || isOldDomain(xForwardedHost)) {
         return res.redirect(301, `https://sectorinstitute.lk${req.url}`);
     }
     next();
+});
+
+// 0.1 SPECIAL ROUTES (Must be first to avoid interference)
+app.get("/robots.txt", (req, res) => {
+    console.log("[Robots] Serving robots.txt via SSR");
+    res.type('text/plain');
+    res.sendFile(path.join(__dirname, 'site', '_robots.txt'), (err) => {
+        if (err) {
+            console.error("[Robots] Error:", err);
+            res.status(404).send(`Robots.txt not found. Error: ${err.message}`);
+        }
+    });
+});
+
+app.get("/sitemap.xml", (req, res) => {
+    console.log("[Sitemap] Serving sitemap.xml via SSR");
+    res.type('application/xml');
+    res.sendFile(path.join(__dirname, 'site', '_sitemap.xml'));
+});
+
+// Debug route (Temporary)
+app.get("/debug-files", (req, res) => {
+    const fs = require('fs');
+    try {
+        const siteFiles = fs.readdirSync(path.join(__dirname, 'site'));
+        res.json({ files: siteFiles, cwd: process.cwd() });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 // 1. Security Policy
@@ -32,8 +59,9 @@ app.use((req, res, next) => {
     next();
 });
 
-// 2. IndexNow Proxy Route (Crucial: Must be before static/wildcard routes)
+// 2. IndexNow Proxy Route
 app.post("/api/indexnow", async (req, res) => {
+    // ... (keep existing)
     try {
         const response = await axios.post("https://api.indexnow.org/indexnow", req.body);
         res.status(response.status).json(response.data);
@@ -43,13 +71,9 @@ app.post("/api/indexnow", async (req, res) => {
     }
 });
 
-// 3. Serve Static Assets from 'site' folder (Created during predeploy)
+// 3. Serve Static Assets
 app.use(express.static(path.join(__dirname, 'site')));
 
-// 3.1 Serve renamed files for GSC/SEO (sitemap, robots)
-// 3.1 Serve renamed files for GSC/SEO (sitemap, robots)
-app.get("/sitemap.xml", (req, res) => res.sendFile(path.join(__dirname, 'site', '_sitemap.xml')));
-app.get("/robots.txt", (req, res) => res.sendFile(path.join(__dirname, 'site', '_robots.txt')));
 
 // 4. Prerender.io Middleware
 app.use(require('prerender-node').set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG'));
