@@ -86,11 +86,10 @@ const SectorHome = () => {
           </div>
 
           <div className="relative z-10 max-w-4xl pt-20">
-            <h1 className="sr-only">Empowering Minds Redefining Future</h1> {/* Hidden for users, visible to bots */}
-            <div aria-hidden="true" className="text-[clamp(2.5rem,9vw,5.5rem)] font-black text-[#1a237e] leading-[1.05] mb-8 tracking-tighter">
+            <h1 className="text-[clamp(2.5rem,9vw,5.5rem)] font-black text-[#1a237e] leading-[1.05] mb-8 tracking-tighter">
               Empowering Minds <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-900 to-indigo-600 uppercase italic">Redefining Future</span>
-            </div>
+            </h1>
             <div className="flex flex-col sm:flex-row gap-5">
               {/* FEATURE 1: Smooth scroll to Timetable section */}
               <a href="#Timetable" className="bg-[#1a237e] text-center text-white font-bold py-5 px-10 rounded-2xl shadow-xl uppercase text-xs tracking-widest hover:bg-blue-800 transition-all">
