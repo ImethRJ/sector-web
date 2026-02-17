@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, 'site')));
 
 
 // 4. Prerender.io Middleware
-app.use(require('prerender-node').set('prerenderToken', 'xV3xxGRXT1nbc3fTwloG'));
+
 
 // 5. Wildcard Route: Serve index.html for all other paths
 app.get("*", (req, res) => {
