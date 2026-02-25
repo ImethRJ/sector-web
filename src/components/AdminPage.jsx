@@ -115,6 +115,7 @@ const LoginForm = ({ inputClass }) => {
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             required
+                            data-testid="login-email"
                         />
                     </div>
                     <div>
@@ -126,6 +127,7 @@ const LoginForm = ({ inputClass }) => {
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                             required
+                            data-testid="login-password"
                         />
                     </div>
 
@@ -135,6 +137,7 @@ const LoginForm = ({ inputClass }) => {
                         type="submit"
                         disabled={loading}
                         className={`w-full py-4 rounded-2xl text-white font-bold shadow-lg transition-all ${loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98]'}`}
+                        data-testid="login-submit"
                     >
                         {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
                     </button>
