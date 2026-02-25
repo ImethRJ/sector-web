@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-Disallow: /sector19365
 Sitemap: https://sectorinstitute.lk/sitemap.xml

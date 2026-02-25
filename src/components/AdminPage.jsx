@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { Link } from 'react-router-dom';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "../firebase";
+import { storage, auth } from "../firebase";
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import imageCompression from 'browser-image-compression';
 
 // --- FORM COMPONENTS ---
@@ -71,6 +72,78 @@ const NoticeForm = ({ onSubmit, editingItem, setEditingItem, inputClass }) => {
     );
 };
 
+// --- LOGIN COMPONENT ---
+
+const LoginForm = ({ inputClass }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (err) {
+            console.error("Login error:", err);
+            setError("Invalid credentials. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] p-4">
+            <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
+                <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-indigo-200">
+                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-900">Admin Access</h2>
+                    <p className="text-slate-500 text-sm mt-1">Please log in to manage your institute.</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 ml-1">Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="admin@sectorinstitute.lk"
+                            className={inputClass}
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5 ml-1">Password</label>
+                        <input
+                            type="password"
+                            placeholder="••••••••"
+                            className={inputClass}
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    {error && <p className="text-red-500 text-xs font-bold text-center bg-red-50 p-2 rounded-lg">{error}</p>}
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className={`w-full py-4 rounded-2xl text-white font-bold shadow-lg transition-all ${loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98]'}`}
+                    >
+                        {loading ? 'Authenticating...' : 'Sign In to Dashboard'}
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
 // --- MAIN ADMIN PAGE ---
 
 const AdminPage = () => {
@@ -81,6 +154,36 @@ const AdminPage = () => {
 
     const [activeTab, setActiveTab] = useState('teachers');
     const [editingItem, setEditingItem] = useState(null);
+    const [user, setUser] = useState(null);
+    const [authLoading, setAuthLoading] = useState(true);
+
+    // --- SECURITY & AUTH ---
+    useEffect(() => {
+        // 1. Add noindex meta tag dynamically
+        const meta = document.createElement('meta');
+        meta.name = "robots";
+        meta.content = "noindex, nofollow";
+        document.head.appendChild(meta);
+
+        // 2. Auth Listener
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+            setAuthLoading(false);
+        });
+
+        return () => {
+            document.head.removeChild(meta);
+            unsubscribe();
+        };
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (err) {
+            console.error("Logout error:", err);
+        }
+    };
 
     // --- REORDER LOGIC ---
     const handleMoveTeacher = (index, direction) => {
@@ -104,6 +207,17 @@ const AdminPage = () => {
 
     const inputClass = "w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all bg-white";
 
+    if (authLoading) return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50">
+            <div className="flex flex-col items-center gap-4">
+                <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+                <p className="text-slate-400 font-bold text-sm tracking-widest uppercase animate-pulse">Checking Access...</p>
+            </div>
+        </div>
+    );
+
+    if (!user) return <LoginForm inputClass={inputClass} />;
+
     return (
         <div className="min-h-screen bg-[#f8fafc] p-4 md:p-8">
             <div className="max-w-6xl mx-auto">
@@ -112,9 +226,17 @@ const AdminPage = () => {
                         <h2 className="text-4xl font-extrabold text-slate-900 tracking-tight">Admin Dashboard</h2>
                         <p className="text-slate-500 mt-1">Manage institute content and staff.</p>
                     </div>
-                    <Link to="/" className="px-5 py-2 bg-white text-slate-600 font-semibold rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
-                        ← View Website
-                    </Link>
+                    <div className="flex gap-3">
+                        <Link to="/" className="px-5 py-2 bg-white text-slate-600 font-semibold rounded-lg border border-slate-200 shadow-sm hover:bg-slate-50 transition-colors">
+                            ← View Website
+                        </Link>
+                        <button
+                            onClick={handleLogout}
+                            className="px-5 py-2 bg-red-50 text-red-600 font-bold rounded-lg border border-red-100 shadow-sm hover:bg-red-100 transition-colors"
+                        >
+                            Sign Out
+                        </button>
+                    </div>
                 </header>
 
                 <nav className="flex bg-slate-200/50 p-1.5 rounded-2xl w-fit mb-10 overflow-x-auto">

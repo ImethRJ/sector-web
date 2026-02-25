@@ -55,7 +55,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/all-tutors" element={<><AllTutors /><Footer /></>} />
-        <Route path="/sector19365" element={<AdminPage />} />
+        <Route path="/management-portal" element={<AdminPage />} />
       </Routes>
     </Suspense>
   );
