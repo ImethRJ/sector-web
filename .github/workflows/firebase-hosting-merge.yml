@@ -24,9 +24,9 @@ jobs:
         run: npm ci
         working-directory: functions 
 
-      # 3. Deploy Functions
+      # 3. Deploy Functions (with --non-interactive --force to allow deleting old functions)
       - name: Deploy Functions
-        run: npx firebase-tools deploy --only functions --project sector-institute
+        run: npx firebase-tools deploy --only functions --project sector-institute --non-interactive --force
 
       # Step 4: Deploy the Hosting files
       - uses: FirebaseExtended/action-hosting-deploy@v0
