@@ -1,10 +1,9 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const { setGlobalOptions } = require("firebase-functions");
 const express = require("express");
-const path = require("path");
 const axios = require('axios');
 
-setGlobalOptions({ maxInstances: 10 });
+setGlobalOptions({ maxInstances: 10, region: "asia-south1" });
 
 const app = express();
 app.use(express.json());
@@ -40,25 +39,6 @@ app.post("/api/indexnow", async (req, res) => {
         console.error("IndexNow Proxy Error:", error.response?.data || error.message);
         res.status(error.response?.status || 500).json({ error: "Failed to notify IndexNow" });
     }
-});
-
-// 3. Serve Static Assets
-app.use(express.static(path.join(__dirname, 'site')));
-
-
-// 4. Prerender.io Middleware
-
-
-// 5. Wildcard Route: Serve index.html for all other paths
-app.get("*", (req, res) => {
-    // Serve _index.html because index.html was renamed to avoid Firebase Hosting static serving
-    const indexPath = path.join(__dirname, 'site', '_index.html');
-    res.sendFile(indexPath, (err) => {
-        if (err) {
-            console.error("Index.html not found at", indexPath);
-            res.status(404).send("Site files not found.");
-        }
-    });
 });
 
 exports.ssr = onRequest(app);

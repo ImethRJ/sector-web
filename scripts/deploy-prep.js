@@ -44,20 +44,8 @@ const targetDir = path.join(__dirname, '..', 'functions', 'site');
 console.log(`Cleaning ${targetDir}...`);
 deleteFolderRecursive(targetDir);
 
-// Critical Fix for GSC/Redirects:
-// Rename dist/index.html so Firebase Hosting doesn't serve it statically.
-// This forces the request to fall through to the SSR function, which handles the 301 redirect.
-const filesToRename = ['index.html'];
-
-filesToRename.forEach(file => {
-    const distFile = path.join(distDir, file);
-    const distFileMoved = path.join(distDir, `_${file}`);
-
-    if (fs.existsSync(distFile)) {
-        console.log(`Renaming dist/${file} to dist/_${file} to force SSR...`);
-        fs.renameSync(distFile, distFileMoved);
-    }
-});
+// Removed the section that renamed index.html to _index.html
+// because we now WANT Firebase Hosting to serve it statically.
 
 console.log(`Copying from ${distDir} to ${targetDir}...`);
 copyFolderRecursiveSync(distDir, targetDir);

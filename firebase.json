@@ -8,8 +8,12 @@
     ],
     "rewrites": [
       {
-        "source": "**",
+        "source": "/api/indexnow",
         "function": "ssr"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   },
