@@ -45,7 +45,7 @@ function App() {
 
   // IndexNow - Runs ONLY once when the app loads
   useEffect(() => {
-    if (window.location.hostname !== "localhost") {
+    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
       submitToIndexNow();
     }
   }, []);
