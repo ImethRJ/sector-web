@@ -4,7 +4,7 @@ A modern, high-performance web application for Sector Education Institute, Panad
 
 ## 🚀 Live Demo
 
-[https://sector-institute.web.app](https://sector-institute.web.app)
+[https://sector-institute.web.app](https://sectorinstitute.lk)
 
 ## ✨ Features
 
